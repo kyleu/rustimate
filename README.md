@@ -10,7 +10,7 @@ A planning poker app, using an actix-web server communicating via websocket to W
 
 This project's structure is available as a cargo-generate template, [generust](https://github.com/kyleu/generust)
 
-See [installing.md](doc/installing.md) for installation guidance.
+See [installing.md](doc/installing.md) for installation guidance. After installing, run `rustimate -h` to get started.
 
 See [scripts.md](doc/scripts.md) for available tools for building, running, and packaging the app.
 

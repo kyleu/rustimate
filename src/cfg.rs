@@ -1,6 +1,6 @@
 use rustimate_service::AppConfig;
 
-const DEFAULT_PORT: u16 = 5500;
+pub(crate) const DEFAULT_PORT: u16 = 5500;
 
 #[cfg(debug_assertions)]
 fn is_debug() -> bool {

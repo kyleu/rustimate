@@ -4,7 +4,7 @@ pub(crate) fn get_matches<'a>() -> ArgMatches<'a> {
   App::new(rustimate_core::APPNAME)
     .version("0.0.20")
     .author(clap::crate_authors!())
-    .about("A work in progress")
+    .about("Starts the HTTP server and (optionally) opens a webview")
     .arg(
       Arg::with_name("config")
         .short("c")
@@ -35,7 +35,10 @@ pub(crate) fn get_matches<'a>() -> ArgMatches<'a> {
             .short("p")
             .long("port")
             .value_name("PORT_NUM")
-            .help("Configures the server to use the provided port (defaults to 5500)")
+            .help(&format!(
+              "Configures the server to use the provided port (defaults to {})",
+              crate::cfg::DEFAULT_PORT
+            ))
             .takes_value(true)
         )
     )
