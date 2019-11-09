@@ -1,7 +1,7 @@
 use crate::files::FileService;
 
-use rustimate_core::session::EstimateSession;
 use rustimate_core::member::Member;
+use rustimate_core::session::EstimateSession;
 use rustimate_core::{Error, Result};
 
 use std::sync::Arc;
@@ -42,7 +42,7 @@ impl SessionService {
     if self.files.exists(&p) {
       self.files.read_json(&p)
     } else {
-      Ok(vec!())
+      Ok(vec![])
     }
   }
 

@@ -11,7 +11,9 @@ pub struct MessageHandler {
 
 impl MessageHandler {
   pub fn new(ctx: RequestContext, session_id: String) -> MessageHandler {
-    let log = ctx.log().new(slog::o!("service" => "message_handler", "session" => session_id.clone()));
+    let log = ctx
+      .log()
+      .new(slog::o!("service" => "message_handler", "session" => session_id.clone()));
     MessageHandler { ctx, session_id, log }
   }
 

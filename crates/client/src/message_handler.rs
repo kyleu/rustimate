@@ -1,7 +1,7 @@
 use crate::ctx::ClientContext;
 
-use rustimate_core::{ResponseMessage, Result};
 use rustimate_core::profile::UserProfile;
+use rustimate_core::{ResponseMessage, Result};
 
 use maud::html;
 use std::sync::RwLock;
