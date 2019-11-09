@@ -37,7 +37,7 @@ pub enum ResponseMessage {
     session: EstimateSession
   },
   MemberStatusUpdate {
-    participant: Uuid,
+    user_id: Uuid,
     connected: bool
   },
   MemberUpdate {

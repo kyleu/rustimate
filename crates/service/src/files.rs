@@ -55,6 +55,10 @@ impl FileService {
     }
   }
 
+  pub(crate) fn exists(&self, path: &str) -> bool {
+    self.path().join(clean_path(path)).exists()
+  }
+
   fn read(&self, path: &str) -> Result<String> {
     let p = self.path().join(clean_path(path));
     std::fs::read_to_string(&p).chain_err(|| format!("Can't read from file [{}]", p.to_string_lossy()))

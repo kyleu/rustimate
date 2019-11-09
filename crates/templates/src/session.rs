@@ -35,7 +35,7 @@ pub fn detail(ctx: &RequestContext, es: &EstimateSession) -> Result<Markup> {
             ul {
               li { "No polls" }
             }
-            a.(ctx.user_profile().link_class()) uk-toggle? href="#add-poll-modal" { "Add Poll" }
+            a.(ctx.user_profile().link_class()) uk-toggle? onclick="document.getElementById('poll-modal-input').value = '';" href="#add-poll-modal" { "Add Poll" }
           }))
         }
         div."uk-width-1-1" {
@@ -58,7 +58,7 @@ pub fn detail(ctx: &RequestContext, es: &EstimateSession) -> Result<Markup> {
         input.uk-input#poll-modal-input type="text" placeholder="Poll Question" name="poll" {}
         p.uk-text-right {
           button.uk-button.uk-button-default.uk-modal-close type="button" { "Cancel" }
-          button.uk-button.uk-button-primary type="button" onclick=(onclick_event("add-poll", "", "document.getElementById('poll-modal-input').value")) { "Add Poll" }
+          button.uk-button.uk-button-primary.uk-modal-close type="button" onclick=(onclick_event("add-poll", "", "document.getElementById('poll-modal-input').value")) { "Add Poll" }
         }
       }
     }

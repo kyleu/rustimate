@@ -30,7 +30,7 @@ pub enum PollActionType {
 pub struct PollAction {
   id: Uuid,
   poll_id: Uuid,
-  participant_id: Uuid,
+  user_id: Uuid,
   t: PollActionType,
   ctx: std::collections::HashMap<String, String>,
   message: String
@@ -40,6 +40,6 @@ pub struct PollAction {
 pub struct Vote {
   session_id: Uuid,
   poll_id: Uuid,
-  participant_id: Uuid,
+  user_id: Uuid,
   choice: String
 }

@@ -37,7 +37,6 @@ pub mod messages {
   pub mod req;
   pub mod rsp;
 }
-pub mod participant;
 pub mod poll;
 pub mod profile;
 pub mod session;

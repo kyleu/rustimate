@@ -40,7 +40,5 @@ By default, the application stores config files in your system's user configurat
 
 ### Files
 
-`profile.json`: User profile information
+`profile/*`: User profile information
 `session/*`: Estimation sessions
-`participant/*`: User sessions
-`poll/*`: Estimation polls

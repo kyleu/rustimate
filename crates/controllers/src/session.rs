@@ -13,8 +13,7 @@ pub(crate) struct QueryStringKey {
 pub(crate) fn create(session: Session, cfg: web::Data<AppConfig>, req: HttpRequest, key: web::Query<QueryStringKey>) -> HttpResponse {
   crate::redir(&session, &cfg, &req, |ctx| {
     let es = EstimateSession::new(key.key.clone());
-    let mut svc = cfg.sessions().write().unwrap();
-    svc.write_session(&es)?;
+    cfg.sessions().write().unwrap().write_session(&es)?;
     ctx.router().route("session.join", &[&es.key()])
   })
 }

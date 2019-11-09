@@ -12,8 +12,21 @@ pub enum MemberRole {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Member {
-  session_id: Uuid,
-  participant_id: Uuid,
+  user_id: Uuid,
   name: String,
   role: MemberRole
+}
+
+impl Member {
+  pub fn user_id(&self) -> &Uuid {
+    &self.user_id
+  }
+
+  pub fn name(&self) -> &String {
+    &self.name
+  }
+
+  pub fn role(&self) -> &MemberRole {
+    &self.role
+  }
 }
