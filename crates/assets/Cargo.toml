@@ -1,0 +1,12 @@
+[package]
+name = "rustimate-assets"
+version = "0.0.1"
+authors = ["Kyle U <kyle@kyleu.com>"]
+edition = "2018"
+description = "Embedded web assets for rustimate"
+homepage = "https://estimate.poker"
+repository = "https://github.com/kyleu/rustimate"
+license = "MIT"
+
+[dependencies]
+rust-embed = { version = "5.1.0", features = ["interpolate-folder-path"] }

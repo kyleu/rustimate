@@ -1,0 +1,19 @@
+[package]
+name = "rustimate-templates"
+version = "0.0.1"
+authors = ["Kyle U <kyle@kyleu.com>"]
+edition = "2018"
+description = "HTML templates used by the rustimate server"
+keywords = ["test", "noop", "pointless"]
+homepage = "https://estimate.poker"
+repository = "https://github.com/kyleu/rustimate"
+license = "MIT"
+
+[dependencies]
+rustimate-core = { version = "0.0.1", path = "../core" }
+rustimate-service = { version = "0.0.1", path = "../service" }
+
+backtrace = "0.3.40"
+maud = "0.21.0"
+num_cpus = "1.10.1"
+serde = { version = "1.0.102", features = ["derive"] }

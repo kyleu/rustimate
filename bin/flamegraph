@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+project_dir=${dir}/..
+cd $project_dir
+
+sudo cargo flamegraph --bin rustimate --output target/flamegraph.svg -- --help
+
+cargo build
+cargo clean -p rustimate
+sudo flamegraph -o target/flamegraph-build.svg "cargo build"
+
+sudo chown -R kyle target

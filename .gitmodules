@@ -1,0 +1,4 @@
+[submodule "crates/assets/stylesheets/uikit"]
+	path = crates/assets/stylesheets/uikit
+	url = https://github.com/uikit/uikit.git
+	shallow = true
