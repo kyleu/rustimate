@@ -1,4 +1,5 @@
 use crate::RequestContext;
+
 use rustimate_core::{RequestMessage, ResponseMessage, Result};
 
 /// Core application logic, routing [RequestMessage](rustimate_core::RequestMessage)s and emitting [ResponseMessage](rustimate_core::ResponseMessage)s.
@@ -17,11 +18,23 @@ impl MessageHandler {
     MessageHandler { ctx, session_id, log }
   }
 
-  pub fn on_open(&self) -> Vec<ResponseMessage> {
-    vec![ResponseMessage::Hello {
+  pub fn on_open(&self) -> Result<Vec<ResponseMessage>> {
+    let hello = ResponseMessage::Hello {
       u: Box::new((*self.ctx.user_profile()).clone()),
       b: !self.ctx.app().verbose()
-    }]
+    };
+    let join_session = {
+      let svc = self.ctx.app().sessions().read().unwrap();
+
+      ResponseMessage::SessionJoined {
+        session: Box::new(svc.read_session(&self.session_id)?),
+        members: svc.read_members(&self.session_id)?,
+        connected: vec!(),
+        polls: svc.read_polls(&self.session_id)?,
+        votes: svc.read_votes(&self.session_id)?
+      }
+    };
+    Ok(vec![hello, join_session])
   }
 
   pub fn on_closed(&self) -> Vec<ResponseMessage> {

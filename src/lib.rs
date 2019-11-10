@@ -28,7 +28,6 @@
 //! - [rustimate-service](rustimate_service)
 //! - [rustimate-templates](rustimate_templates)
 
-mod app;
 mod args;
 mod cfg;
 mod log;
@@ -40,7 +39,8 @@ pub mod tests;
 /// Application entrypoint, creates and starts the server
 pub fn go() -> rustimate_core::Result<()> {
   let cfg = crate::cfg::cfg_from_args();
-  crate::app::start(cfg)
+  let (port_tx, _) = std::sync::mpsc::channel();
+  crate::server::start_server(cfg, port_tx)
 }
 
 /// External app entrypoint, calls `go()` directly and swallows errors

@@ -19,6 +19,12 @@ pub struct Poll {
   final_vote: Option<String>
 }
 
+impl Poll {
+  pub fn id(&self) -> &Uuid {
+      &self.id
+  }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub enum PollActionType {
   UpdateTitle,
@@ -42,4 +48,14 @@ pub struct Vote {
   poll_id: Uuid,
   user_id: Uuid,
   choice: String
+}
+
+impl Vote {
+  pub fn poll_id(&self) -> &Uuid {
+    &self.poll_id
+  }
+
+  pub fn user_id(&self) -> &Uuid {
+    &self.user_id
+  }
 }

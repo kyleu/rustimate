@@ -1,16 +1,12 @@
 # Features
 
-## Rust!!!
+## Shared Code
 
-What a great language. The whole app compresses to less than 4MB zipped, including the server, wasm, and a webview.
+The application is split into five crates, with `core` being shared between the server binary and WASM. Shared messages are passed across a websocket in text or binary form.
 
 ## Cross-built
 
 The app is compiled by [TravisCI](https://travis-ci.org) and [AppVeyor](https://appveyor.com), publishing binaries for a variety of desktop and mobile architectures.
-
-## Desktop Apps
-
-On MacOS, Linux, and Windows, the app starts the server on an ephemeral port and creates a native webview pointed to it (or you can start the bare server via CLI argument).
 
 ## Versioned Publishing
 
@@ -22,11 +18,11 @@ WASM-to-JavaScript helpers provided by [wasm-bindgen](https://github.com/rustwas
 
 ## HTML Templating
 
-Loads of [maud](https://maud.lambda.xyz/) templates, integrating with the user's session and theme. Helpers provided for UI components, flash messages, reverse routing, and backtraces.
+Loads of [maud](https://maud.lambda.xyz) templates, integrating with the user's session and theme. Helpers provided for UI components, flash messages, reverse routing, and backtraces.
 
 ## WebSocket
 
-WebSocket connections (using [serde_json](https://serde.rs/) in debug mode, [bincode](https://docs.rs/bincode) in release), passing messages defined by shared code.
+WebSocket connections (using [serde_json](https://serde.rs) in debug mode, [bincode](https://docs.rs/bincode) in release), passing messages defined by shared code.
 
 ## HTTP Server
 
@@ -42,8 +38,8 @@ SCSS stylesheets extending [UIKit](https://getuikit.com), which is included as a
 
 ## User Theme
 
-Light mode, dark mode, and color selection make a good starting point for user sessions, supported by all the template components
+Light mode, dark mode, and color selection make a good starting point for user sessions, supported by all the template components.
 
 ## Logging
 
-Sophisticated logging using [slog](https://github.com/slog-rs/slog) on the server, and [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen) on the client.
+File and console-based logging using [slog](https://github.com/slog-rs/slog) on the server (including backtraces and source location), and [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen) on the client.
