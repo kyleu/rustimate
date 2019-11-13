@@ -11,6 +11,7 @@ use uuid::Uuid;
 #[derive(Debug, Serialize, Deserialize)]
 pub enum ResponseMessage {
   Hello {
+    session_id: Uuid,
     u: Box<crate::profile::UserProfile>,
     b: bool
   },

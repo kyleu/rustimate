@@ -5,21 +5,35 @@ use rustimate_core::{RequestMessage, ResponseMessage, Result};
 /// Core application logic, routing [RequestMessage](rustimate_core::RequestMessage)s and emitting [ResponseMessage](rustimate_core::ResponseMessage)s.
 #[derive(Debug)]
 pub struct MessageHandler {
-  ctx: RequestContext,
+  id: uuid::Uuid,
   session_id: String,
+  ctx: RequestContext,
   log: slog::Logger
 }
 
 impl MessageHandler {
-  pub fn new(ctx: RequestContext, session_id: String) -> MessageHandler {
+  pub fn new(id: uuid::Uuid, session_id: String, ctx: RequestContext) -> MessageHandler {
     let log = ctx
       .log()
       .new(slog::o!("service" => "message_handler", "session" => session_id.clone()));
-    MessageHandler { ctx, session_id, log }
+    MessageHandler { id, session_id, ctx, log }
+  }
+
+  pub fn id(&self) -> &uuid::Uuid {
+    &self.id
+  }
+
+  pub fn session_id(&self) -> &String {
+    &self.session_id
+  }
+
+  pub fn ctx(&self) -> &RequestContext {
+    &self.ctx
   }
 
   pub fn on_open(&self) -> Result<Vec<ResponseMessage>> {
     let hello = ResponseMessage::Hello {
+      session_id: *self.id(),
       u: Box::new((*self.ctx.user_profile()).clone()),
       b: !self.ctx.app().verbose()
     };
