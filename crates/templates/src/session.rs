@@ -2,11 +2,11 @@ use crate::utils::onclick_event;
 
 use rustimate_core::session::EstimateSession;
 use rustimate_core::Result;
-use rustimate_service::RequestContext;
+use rustimate_service::{RequestContext, Router};
 
 use maud::{html, Markup};
 
-pub fn detail(ctx: &RequestContext, es: &EstimateSession) -> Result<Markup> {
+pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -> Result<Markup> {
   let content = html! {
     div.uk-container {
       div.uk-margin-top.uk-grid-small uk-grid? {
@@ -62,10 +62,10 @@ pub fn detail(ctx: &RequestContext, es: &EstimateSession) -> Result<Markup> {
         }
       }
     }
-    script src=(ctx.router().route_static("client.js")?) defer? {}
+    script src=(router.route_static("client.js")?) defer? {}
   };
   Ok(html! {
-    (crate::simple(ctx, "Home", content)?)
+    (crate::simple(ctx, router, "Home", content)?)
   })
 }
 

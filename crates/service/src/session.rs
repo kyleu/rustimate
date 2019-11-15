@@ -47,7 +47,7 @@ impl SessionService {
 
   pub fn add_member(&mut self, key: &str, m: Member) -> Result<()> {
     let mut current = self.read_members(key)?;
-    if current.iter().find(|x| x.user_id() == m.user_id()).is_some() {
+    if current.iter().any(|x| x.user_id() == m.user_id()) {
       Ok(())
     } else {
       current.push(m);

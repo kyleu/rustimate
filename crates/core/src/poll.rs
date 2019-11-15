@@ -21,7 +21,7 @@ pub struct Poll {
 
 impl Poll {
   pub fn id(&self) -> &Uuid {
-      &self.id
+    &self.id
   }
 }
 

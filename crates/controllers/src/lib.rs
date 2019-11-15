@@ -17,6 +17,7 @@
 
 //! `rustimate-controllers` contains actix-web HTTP controllers, usually calling methods from [rustimate-service](rustimate_service).
 
+pub mod admin;
 pub mod routes;
 
 pub mod util {
@@ -34,6 +35,7 @@ pub mod session;
 pub mod static_file;
 pub mod testbed;
 pub mod websocket;
+pub mod websocket_msg;
 
 pub(crate) use crate::util::actions::act;
 pub(crate) use crate::util::actions::not_found;

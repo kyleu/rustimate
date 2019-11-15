@@ -17,6 +17,7 @@
 
 //! `rustimate-service` contains the primary logic for the application. It receives [RequestMessage](rustimate_core::RequestMessage)s and emits [ResponseMessage](rustimate_core::ResponseMessage)s
 
+pub mod cache;
 pub mod cfg;
 pub mod ctx;
 pub mod files;
@@ -28,3 +29,5 @@ pub mod session;
 pub use cfg::AppConfig;
 #[doc(inline)]
 pub use ctx::RequestContext;
+#[doc(inline)]
+pub use ctx::Router;

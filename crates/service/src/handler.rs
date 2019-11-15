@@ -6,25 +6,25 @@ use rustimate_core::{RequestMessage, ResponseMessage, Result};
 #[derive(Debug)]
 pub struct MessageHandler {
   id: uuid::Uuid,
-  session_id: String,
+  channel_id: String,
   ctx: RequestContext,
   log: slog::Logger
 }
 
 impl MessageHandler {
-  pub fn new(id: uuid::Uuid, session_id: String, ctx: RequestContext) -> MessageHandler {
+  pub fn new(id: uuid::Uuid, channel_id: String, ctx: RequestContext) -> MessageHandler {
     let log = ctx
       .log()
-      .new(slog::o!("service" => "message_handler", "session" => session_id.clone()));
-    MessageHandler { id, session_id, ctx, log }
+      .new(slog::o!("service" => "message_handler", "session" => format!("{}", id), "channel" => channel_id.clone()));
+    MessageHandler { id, channel_id, ctx, log }
   }
 
   pub fn id(&self) -> &uuid::Uuid {
     &self.id
   }
 
-  pub fn session_id(&self) -> &String {
-    &self.session_id
+  pub fn channel_id(&self) -> &String {
+    &self.channel_id
   }
 
   pub fn ctx(&self) -> &RequestContext {
@@ -38,14 +38,14 @@ impl MessageHandler {
       b: !self.ctx.app().verbose()
     };
     let join_session = {
-      let svc = self.ctx.app().sessions().read().unwrap();
+      let svc = self.ctx.app().session_svc().read().unwrap();
 
       ResponseMessage::SessionJoined {
-        session: Box::new(svc.read_session(&self.session_id)?),
-        members: svc.read_members(&self.session_id)?,
-        connected: vec!(),
-        polls: svc.read_polls(&self.session_id)?,
-        votes: svc.read_votes(&self.session_id)?
+        session: Box::new(svc.read_session(&self.channel_id)?),
+        members: svc.read_members(&self.channel_id)?,
+        connected: vec![],
+        polls: svc.read_polls(&self.channel_id)?,
+        votes: svc.read_votes(&self.channel_id)?
       }
     };
     Ok(vec![hello, join_session])

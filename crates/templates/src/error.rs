@@ -1,9 +1,9 @@
 use maud::{html, Markup};
 
 use rustimate_core::Result;
-use rustimate_service::RequestContext;
+use rustimate_service::{RequestContext, Router};
 
-pub fn not_found(ctx: &RequestContext, path: &str) -> Result<Markup> {
+pub fn not_found(ctx: &RequestContext, router: &dyn Router, path: &str) -> Result<Markup> {
   let content = html! {
     div.uk-container {
       div.uk-section.uk-section-small {
@@ -21,11 +21,11 @@ pub fn not_found(ctx: &RequestContext, path: &str) -> Result<Markup> {
     }
   };
   Ok(html! {
-    (crate::simple(ctx, "Not Found", content)?)
+    (crate::simple(ctx, router, "Not Found", content)?)
   })
 }
 
-pub fn exception(ctx: &RequestContext, e: &rustimate_core::Error) -> Result<Markup> {
+pub fn exception(ctx: &RequestContext, router: &dyn Router, e: &rustimate_core::Error) -> Result<Markup> {
   let content = html! {
     div.uk-container {
       div.uk-section.uk-section-small {
@@ -52,6 +52,6 @@ pub fn exception(ctx: &RequestContext, e: &rustimate_core::Error) -> Result<Mark
     }
   };
   Ok(html! {
-    (crate::simple(ctx, "Error", content)?)
+    (crate::simple(ctx, router, "Error", content)?)
   })
 }

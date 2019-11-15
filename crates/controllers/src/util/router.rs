@@ -1,6 +1,6 @@
 use actix_web::HttpRequest;
 
-use rustimate_service::ctx::Router;
+use rustimate_service::Router;
 
 use rustimate_core::{Error, Result};
 

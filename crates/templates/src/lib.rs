@@ -19,6 +19,7 @@
 
 //! `rustimate-templates` contains Maud templates used by the server to render responses
 
+pub mod admin;
 pub(crate) mod components {
   pub(crate) mod backtrace;
   pub(crate) mod card;
