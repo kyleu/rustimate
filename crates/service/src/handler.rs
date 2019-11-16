@@ -32,8 +32,8 @@ impl MessageHandler {
   }
 
   pub fn on_open(&self) -> Result<Vec<ResponseMessage>> {
-    let hello = ResponseMessage::Hello {
-      session_id: *self.id(),
+    let connected = ResponseMessage::Connected {
+      connection_id: *self.id(),
       u: Box::new((*self.ctx.user_profile()).clone()),
       b: !self.ctx.app().verbose()
     };
@@ -48,7 +48,7 @@ impl MessageHandler {
         votes: svc.read_votes(&self.channel_id)?
       }
     };
-    Ok(vec![hello, join_session])
+    Ok(vec![connected, join_session])
   }
 
   pub fn on_closed(&self) -> Vec<ResponseMessage> {

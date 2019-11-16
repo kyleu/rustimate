@@ -87,8 +87,7 @@ pub fn prototype(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
 pub fn scroll(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
   let content = html! {
     div style="height: 2048px;" {
-      "Hello!"
-      " This is a tall block, test scrolling if you'd like "
+      "This is a tall block, test scrolling if you'd like..."
     }
   };
   Ok(html! {

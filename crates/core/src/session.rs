@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
+
+use std::collections::HashMap;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub enum SessionStatus {
@@ -13,7 +14,7 @@ pub struct EstimateSession {
   key: String,
   title: String,
   choices: Vec<String>,
-  options: std::collections::HashMap<String, String>,
+  options: HashMap<String, String>,
   status: SessionStatus
 }
 
@@ -23,7 +24,7 @@ impl EstimateSession {
       key: slug_for(&title),
       title,
       choices: default_choices(),
-      options: std::collections::HashMap::new(),
+      options: HashMap::new(),
       status: SessionStatus::Creating
     }
   }
@@ -57,13 +58,4 @@ fn default_choices() -> Vec<String> {
     "100".into(),
     "?".into(),
   ]
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct SessionContext {
-  session: EstimateSession,
-  members: std::collections::HashMap<Uuid, crate::member::Member>,
-  connected_members: std::collections::HashSet<Uuid>,
-  polls: std::collections::HashMap<Uuid, crate::poll::Poll>,
-  votes: std::collections::HashMap<(Uuid, Uuid), crate::poll::Vote>
 }

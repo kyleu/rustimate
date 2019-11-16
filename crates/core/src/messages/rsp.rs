@@ -10,8 +10,8 @@ use uuid::Uuid;
 #[allow(variant_size_differences)]
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum ResponseMessage {
-  Hello {
-    session_id: Uuid,
+  Connected {
+    connection_id: Uuid,
     u: Box<crate::profile::UserProfile>,
     b: bool
   },

@@ -1,9 +1,12 @@
 use crate::socket::ws::ClientSocket;
+
 use rustimate_core::profile::UserProfile;
+use rustimate_core::session_ctx::SessionContext;
 use rustimate_core::{Error, RequestMessage, Result};
 
 use std::rc::Rc;
 use std::sync::RwLock;
+use uuid::Uuid;
 use web_sys::{Document, Window};
 
 #[derive(Debug)]
@@ -12,6 +15,7 @@ pub(crate) struct ClientContext {
   document: Document,
   socket: ClientSocket,
   session_id: Option<uuid::Uuid>,
+  session_ctx: Option<SessionContext>,
   profile: UserProfile
 }
 
@@ -30,6 +34,7 @@ impl ClientContext {
       document,
       socket,
       session_id: None,
+      session_ctx: None,
       profile
     }));
 
@@ -53,14 +58,26 @@ impl ClientContext {
     &self.profile
   }
 
-  pub(crate) fn on_hello(&mut self, session_id: uuid::Uuid, profile: UserProfile, binary: bool) {
+  pub(crate) fn session_id(&self) -> &Option<Uuid> {
+    &self.session_id
+  }
+
+  pub(crate) fn session_ctx(&self) -> &Option<SessionContext> {
+    &self.session_ctx
+  }
+
+  pub(crate) fn on_open(&self) -> Result<()> {
+    Ok(())
+  }
+
+  pub(crate) fn on_connected(&mut self, connection_id: Uuid, profile: UserProfile, binary: bool) {
     self.socket.set_binary(binary);
     self.session_id = Some(session_id);
     self.profile = profile;
   }
 
-  pub(crate) fn on_open(&self) -> Result<()> {
-    Ok(())
+  pub(crate) fn on_session_joined(&mut self, s: SessionContext) {
+    self.session_ctx = Some(s);
   }
 
   pub(crate) fn send(&self, rm: RequestMessage) {
