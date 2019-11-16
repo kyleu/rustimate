@@ -9,11 +9,7 @@ extern "C" {
 
   #[allow(unsafe_code)]
   #[wasm_bindgen(js_namespace = rustimate)]
-  pub(crate) fn activate_tab(id: &str, idx: usize);
-
-  #[allow(unsafe_code)]
-  #[wasm_bindgen(js_namespace = rustimate)]
-  pub(crate) fn wire_textarea(id: &str);
+  pub(crate) fn notify(level: &str, content: &str);
 }
 
 #[wasm_bindgen]

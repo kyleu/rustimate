@@ -41,4 +41,4 @@ pub mod testbed;
 pub(crate) mod utils;
 
 pub(crate) use components::card::card;
-pub(crate) use components::simple::simple;
+pub(crate) use components::simple::{section, simple};

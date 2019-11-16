@@ -5,23 +5,15 @@ use rustimate_service::{RequestContext, Router};
 
 pub fn index(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
   let content = html! {
-    div.uk-container {
-      div.uk-section.uk-section-small {
-        div.uk-container.uk-container-small {
-          div.uk-text-center {
-            h1.uk-heading-hero {
-              "Welcome to rustimate"
-            }
-          }
-          (session_form(ctx, router)?)
-          (testbed_list(ctx, router)?)
-        }
+    div.uk-text-center {
+      h1.uk-heading-hero {
+        "Welcome to rustimate"
       }
     }
+    (session_form(ctx, router)?)
+    (testbed_list(ctx, router)?)
   };
-  Ok(html! {
-    (crate::simple(ctx, router, "Home", content)?)
-  })
+  crate::section(ctx, router, "Home", content)
 }
 
 fn session_form(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {

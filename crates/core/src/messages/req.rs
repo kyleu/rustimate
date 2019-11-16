@@ -8,7 +8,6 @@ use uuid::Uuid;
 pub enum RequestMessage {
   Ping { v: i64 },
   GetVersion,
-  DebugInfo { info: String },
 
   // Session messages
   JoinSession { id: Uuid },

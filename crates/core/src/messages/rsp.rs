@@ -22,7 +22,10 @@ pub enum ResponseMessage {
   Pong {
     v: i64
   },
-
+  Notification {
+    level: String,
+    content: String
+  },
   // Session messages
   SessionNotFound {
     id: Uuid

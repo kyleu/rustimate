@@ -14,7 +14,7 @@ pub(crate) struct ClientContext {
   window: Window,
   document: Document,
   socket: ClientSocket,
-  session_id: Option<uuid::Uuid>,
+  connection_id: Option<Uuid>,
   session_ctx: Option<SessionContext>,
   profile: UserProfile
 }
@@ -33,7 +33,7 @@ impl ClientContext {
       window,
       document,
       socket,
-      session_id: None,
+      connection_id: None,
       session_ctx: None,
       profile
     }));
@@ -58,8 +58,8 @@ impl ClientContext {
     &self.profile
   }
 
-  pub(crate) fn session_id(&self) -> &Option<Uuid> {
-    &self.session_id
+  pub(crate) fn connection_id(&self) -> &Option<Uuid> {
+    &self.connection_id
   }
 
   pub(crate) fn session_ctx(&self) -> &Option<SessionContext> {
@@ -72,7 +72,7 @@ impl ClientContext {
 
   pub(crate) fn on_connected(&mut self, connection_id: Uuid, profile: UserProfile, binary: bool) {
     self.socket.set_binary(binary);
-    self.session_id = Some(session_id);
+    self.connection_id = Some(connection_id);
     self.profile = profile;
   }
 
