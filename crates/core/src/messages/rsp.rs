@@ -1,4 +1,5 @@
 use crate::member::Member;
+use crate::util::NotificationLevel;
 use crate::poll::{Poll, Vote};
 use crate::session::EstimateSession;
 use crate::{Error, Result};
@@ -23,7 +24,7 @@ pub enum ResponseMessage {
     v: i64
   },
   Notification {
-    level: String,
+    level: NotificationLevel,
     content: String
   },
   // Session messages

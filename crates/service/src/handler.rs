@@ -64,12 +64,18 @@ impl MessageHandler {
     let mut ret = Vec::new();
     match msg {
       RequestMessage::Ping { v } => ret.push(ResponseMessage::Pong { v }),
+      RequestMessage::AddPoll { q } => self.on_add_poll(q),
       msg => slog::warn!(self.log, "Unhandled RequestMessage [{:?}]", msg)
     }
     Ok(ret)
   }
 
   pub fn on_error(&self) {}
+
+  pub fn on_add_poll(&self, s: String) {
+    slog::info!(self.log(), "Adding poll [{}] for session [{}]", s, self.channel_id())
+
+  }
 
   pub fn log(&self) -> &slog::Logger {
     &self.log

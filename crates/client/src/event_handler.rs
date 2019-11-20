@@ -10,8 +10,8 @@ impl EventHandler {
         v: js_sys::Date::now() as i64
       }),
 
-      "add-poll" if v.is_empty() => info!("Enter a question next time"),
-      "add-poll" => ctx.send(RequestMessage::AddPoll { str: v.into() }),
+      "add-poll" if v.is_empty() => crate::js::notify("warn", "Enter a question next time"),
+      "add-poll" => ctx.send(RequestMessage::AddPoll { q: v.into() }),
 
       _ => warn!("Unhandled event [{}] with [k:{}], [v:{}]", t, k, v)
     }

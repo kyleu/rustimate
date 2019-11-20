@@ -13,7 +13,7 @@ pub enum RequestMessage {
   JoinSession { id: Uuid },
   UpdateSession { name: String, choices: Vec<String> },
   UpdateProfile { name: String },
-  AddPoll { str: String },
+  AddPoll { q: String },
   UpdatePoll { poll: Uuid, title: Option<String> },
   // SetPollStatus { poll: Uuid, status: PollStatusType },
   SubmitVote { poll: Uuid, vote: String }

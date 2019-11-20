@@ -1,6 +1,6 @@
 use crate::ctx::ClientContext;
-
 use rustimate_core::profile::UserProfile;
+use rustimate_core::util::NotificationLevel;
 use rustimate_core::session_ctx::SessionContext;
 use rustimate_core::{ResponseMessage, Result};
 
@@ -15,6 +15,9 @@ impl MessageHandler {
     match msg {
       ResponseMessage::Connected { connection_id, u, b } => on_connected(ctx, connection_id, &u, b)?,
       ResponseMessage::Pong { v } => on_pong(ctx, v)?,
+      ResponseMessage::Notification { level, content } => on_notification(level, content)?,
+
+      // Custom Messages
       ResponseMessage::SessionJoined {
         session,
         members,
@@ -39,8 +42,8 @@ fn on_connected(ctx: &RwLock<ClientContext>, connection_id: uuid::Uuid, u: &User
   Ok(())
 }
 
-fn on_notification(level: String, content: String) -> Result<()> {
-  crate::js::notify(&level, &content);
+fn on_notification(level: NotificationLevel, content: String) -> Result<()> {
+  crate::logging::notify(level, &content);
   Ok(())
 }
 
