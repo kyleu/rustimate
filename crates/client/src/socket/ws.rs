@@ -1,6 +1,6 @@
 use rustimate_core::messages::req::RequestMessage;
-use rustimate_core::{Error, Result};
 
+use anyhow::Result;
 use wasm_bindgen::prelude::{Closure, JsValue};
 use wasm_bindgen::JsCast;
 use web_sys::{ErrorEvent, MessageEvent, WebSocket};
@@ -15,7 +15,7 @@ pub(crate) struct ClientSocket {
 impl ClientSocket {
   pub(crate) fn new(curr_url: &str, binary: bool) -> Result<ClientSocket> {
     let url = calc_url(curr_url);
-    let ws = WebSocket::new(&url).map_err(|e| Error::from(format!("Error creating WebSocket: {:?}", e)))?;
+    let ws = WebSocket::new(&url).map_err(|e| anyhow::anyhow!(format!("Error creating WebSocket: {:?}", e)))?;
     ws.set_binary_type(web_sys::BinaryType::Arraybuffer);
     Ok(ClientSocket { url, binary, ws })
   }

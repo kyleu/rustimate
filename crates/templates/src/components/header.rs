@@ -1,7 +1,7 @@
-use maud::{html, Markup};
-
-use rustimate_core::Result;
 use rustimate_service::{RequestContext, Router};
+
+use anyhow::Result;
+use maud::{html, Markup};
 
 pub(crate) fn header(ctx: &RequestContext, router: &dyn Router, title: &str) -> Result<Markup> {
   Ok(html! {

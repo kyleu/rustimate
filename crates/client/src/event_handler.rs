@@ -1,5 +1,6 @@
+use anyhow::Result;
 use crate::ctx::ClientContext;
-use rustimate_core::{RequestMessage, Result};
+use rustimate_core::RequestMessage;
 
 pub(crate) struct EventHandler {}
 
@@ -11,7 +12,7 @@ impl EventHandler {
       }),
 
       "add-poll" if v.is_empty() => crate::js::notify("warn", "Enter a question next time"),
-      "add-poll" => ctx.send(RequestMessage::AddPoll { q: v.into() }),
+      "add-poll" => ctx.send(RequestMessage::UpdatePoll { id: uuid::Uuid::new_v4(), title: v.into() }),
 
       _ => warn!("Unhandled event [{}] with [k:{}], [v:{}]", t, k, v)
     }

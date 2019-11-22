@@ -37,7 +37,7 @@ mod server;
 pub mod tests;
 
 /// Application entrypoint, creates and starts the server
-pub fn go() -> rustimate_core::Result<()> {
+pub fn go() -> anyhow::Result<()> {
   let cfg = crate::cfg::cfg_from_args();
   let (port_tx, _) = std::sync::mpsc::channel();
   crate::server::start_server(cfg, port_tx)

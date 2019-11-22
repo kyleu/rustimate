@@ -1,6 +1,5 @@
+use anyhow::Result;
 use maud::{html, Markup};
-
-use rustimate_core::Result;
 use rustimate_service::{RequestContext, Router};
 
 pub(crate) fn simple(ctx: &RequestContext, router: &dyn Router, title: &str, content: Markup) -> Result<Markup> {

@@ -1,4 +1,3 @@
-use rustimate_core::Result;
 use rustimate_service::Router;
 use rustimate_service::{AppConfig, RequestContext};
 
@@ -6,6 +5,7 @@ use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::web::{Data, Path};
 use actix_web::{HttpRequest, HttpResponse};
+use anyhow::Result;
 
 pub(crate) fn act<F>(session: &Session, cfg: &Data<AppConfig>, req: HttpRequest, f: F) -> HttpResponse
 where F: Fn(&RequestContext, &dyn Router) -> Result<maud::Markup> {
@@ -41,7 +41,7 @@ pub(crate) fn ok(content: String) -> HttpResponse {
   HttpResponse::Ok().content_type("text/html; charset=utf-8").body(content)
 }
 
-pub(crate) fn err(ctx: &RequestContext, router: &dyn Router, e: &rustimate_core::Error) -> HttpResponse {
+pub(crate) fn err(ctx: &RequestContext, router: &dyn Router, e: &anyhow::Error) -> HttpResponse {
   let content = match rustimate_templates::error::exception(ctx, router, e) {
     Ok(c) => c.into_string(),
     Err(e) => format!("A critical system error has occurred: {}", e.to_string())

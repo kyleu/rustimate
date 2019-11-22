@@ -1,10 +1,11 @@
 use crate::ctx::ClientContext;
+
+use maud::html;
+use anyhow::Result;
 use rustimate_core::profile::UserProfile;
 use rustimate_core::util::NotificationLevel;
 use rustimate_core::session_ctx::SessionContext;
-use rustimate_core::{ResponseMessage, Result};
-
-use maud::html;
+use rustimate_core::ResponseMessage;
 use std::sync::RwLock;
 
 pub(crate) struct MessageHandler {}

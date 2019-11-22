@@ -2,8 +2,8 @@ use crate::member::Member;
 use crate::util::NotificationLevel;
 use crate::poll::{Poll, Vote};
 use crate::session::EstimateSession;
-use crate::{Error, Result};
 
+use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -58,18 +58,18 @@ pub enum ResponseMessage {
 
 impl ResponseMessage {
   pub fn from_json(s: &str) -> Result<ResponseMessage> {
-    serde_json::from_str(&s).map_err(|e| Error::from(format!("Can't decode json ResponseMessage: {}", e)))
+    serde_json::from_str(&s).with_context(|| "Can't decode json ResponseMessage")
   }
 
   pub fn to_json(&self) -> Result<String> {
-    serde_json::to_string_pretty(&self).map_err(|e| Error::from(format!("Can't encode json ResponseMessage: {}", e)))
+    serde_json::to_string_pretty(&self).with_context(|| "Can't encode json ResponseMessage")
   }
 
   pub fn from_binary(b: &[u8]) -> Result<ResponseMessage> {
-    bincode::deserialize(&b).map_err(|e| Error::from(format!("Can't decode binary ResponseMessage: {}", e)))
+    bincode::deserialize(&b).with_context(|| "Can't decode binary ResponseMessage")
   }
 
   pub fn to_binary(&self) -> Result<Vec<u8>> {
-    bincode::serialize(&self).map_err(|e| Error::from(format!("Can't encode binary ResponseMessage: {}", e)))
+    bincode::serialize(&self).with_context(|| "Can't encode binary ResponseMessage")
   }
 }

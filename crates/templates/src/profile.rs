@@ -1,7 +1,6 @@
+use anyhow::Result;
 use maud::{html, Markup};
-
 use rustimate_core::profile::Theme;
-use rustimate_core::Result;
 use rustimate_service::{RequestContext, Router};
 
 pub fn profile(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {

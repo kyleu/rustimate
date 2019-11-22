@@ -1,6 +1,5 @@
 use maud::{html, Markup};
-
-use backtrace::Backtrace;
+use std::backtrace::Backtrace;
 
 #[derive(Debug)]
 struct Frame {

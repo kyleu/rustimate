@@ -3,8 +3,8 @@ use crate::files::FileService;
 use rustimate_core::member::Member;
 use rustimate_core::poll::{Poll, Vote};
 use rustimate_core::session::EstimateSession;
-use rustimate_core::{Error, Result};
 
+use anyhow::Result;
 use std::sync::Arc;
 
 #[derive(Clone, Debug)]
@@ -25,7 +25,7 @@ impl SessionService {
     if self.files.exists(&p) {
       self.files.read_json(&p)
     } else {
-      Err(Error::from(format!("No session found with key [{}]", key)))
+      Err(anyhow::anyhow!("No session found with key [{}]", key))
     }
   }
 

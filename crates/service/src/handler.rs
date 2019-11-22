@@ -1,6 +1,7 @@
 use crate::RequestContext;
 
-use rustimate_core::{RequestMessage, ResponseMessage, Result};
+use anyhow::Result;
+use rustimate_core::{RequestMessage, ResponseMessage};
 
 /// Core application logic, routing [RequestMessage](rustimate_core::RequestMessage)s and emitting [ResponseMessage](rustimate_core::ResponseMessage)s.
 #[derive(Debug)]
@@ -64,7 +65,7 @@ impl MessageHandler {
     let mut ret = Vec::new();
     match msg {
       RequestMessage::Ping { v } => ret.push(ResponseMessage::Pong { v }),
-      RequestMessage::AddPoll { q } => self.on_add_poll(q),
+      RequestMessage::UpdatePoll { id, title } => self.on_update_poll(id, title),
       msg => slog::warn!(self.log, "Unhandled RequestMessage [{:?}]", msg)
     }
     Ok(ret)
@@ -72,9 +73,8 @@ impl MessageHandler {
 
   pub fn on_error(&self) {}
 
-  pub fn on_add_poll(&self, s: String) {
-    slog::info!(self.log(), "Adding poll [{}] for session [{}]", s, self.channel_id())
-
+  pub fn on_update_poll(&self, id: uuid::Uuid, title: String) {
+    slog::info!(self.log(), "Adding poll [{}: {}] for session [{}]", id, title, self.channel_id())
   }
 
   pub fn log(&self) -> &slog::Logger {

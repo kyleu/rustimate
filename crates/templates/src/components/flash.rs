@@ -1,6 +1,5 @@
+use anyhow::Result;
 use maud::{html, Markup};
-
-use rustimate_core::Result;
 
 pub(crate) fn flash(k: &str, v: &str) -> Result<Markup> {
   let cls = match k {

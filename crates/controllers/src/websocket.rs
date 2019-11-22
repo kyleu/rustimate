@@ -1,14 +1,14 @@
 use crate::websocket_msg::{SendResponseMessage, ServerSender};
 
-use rustimate_core::{RequestMessage, ResponseMessage, Result};
-use rustimate_service::handler::MessageHandler;
-use rustimate_service::AppConfig;
-
 use actix::{Actor, AsyncContext, StreamHandler};
 use actix_session::Session;
 use actix_web::{web, Error, HttpRequest, HttpResponse};
 use actix_web_actors::ws::WebsocketContext;
 use actix_web_actors::ws::{Message, ProtocolError};
+use anyhow::Result;
+use rustimate_core::{RequestMessage, ResponseMessage};
+use rustimate_service::handler::MessageHandler;
+use rustimate_service::AppConfig;
 
 #[derive(derive_more::Constructor)]
 pub(crate) struct ServerSocket {
@@ -39,7 +39,7 @@ impl ServerSocket {
     Ok(())
   }
 
-  fn handle_error(&self, e: &rustimate_core::Error, wsc: &mut WebsocketContext<Self>) {
+  fn handle_error(&self, e: &anyhow::Error, wsc: &mut WebsocketContext<Self>) {
     slog::warn!(&self.handler().log(), "Error handling message: {}", e);
     let msg = ResponseMessage::ServerError {
       reason: format!("{}", e),
@@ -99,7 +99,7 @@ impl actix::Handler<SendResponseMessage> for ServerSocket {
     match self.send_ws(m.msg(), ctx) {
       Ok(_) => (), // noop for now
       Err(e) => self.handle_error(
-        &rustimate_core::Error::from(format!("Error sending message [{:?}]: {}", m.msg(), e)),
+        &e.context(format!("Error sending message [{:?}]", m.msg())),
         ctx
       )
     }

@@ -1,10 +1,9 @@
 use crate::utils::onclick_event;
 
-use rustimate_core::session::EstimateSession;
-use rustimate_core::Result;
-use rustimate_service::{RequestContext, Router};
-
+use anyhow::Result;
 use maud::{html, Markup};
+use rustimate_core::session::EstimateSession;
+use rustimate_service::{RequestContext, Router};
 
 pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -> Result<Markup> {
   let content = html! {

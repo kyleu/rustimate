@@ -1,8 +1,6 @@
-use slog;
-
 use crate::cfg::AppConfig;
 use rustimate_core::profile::UserProfile;
-use rustimate_core::Result;
+use anyhow::Result;
 
 /// Provides reverse routing of urls
 pub trait Router {

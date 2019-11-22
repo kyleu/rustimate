@@ -1,8 +1,7 @@
-use actix_web::HttpRequest;
-
 use rustimate_service::Router;
 
-use rustimate_core::{Error, Result};
+use actix_web::HttpRequest;
+use anyhow::Result;
 
 #[derive(derive_more::Constructor, Debug)]
 pub(crate) struct RequestRouter {
@@ -15,6 +14,6 @@ impl Router for RequestRouter {
       .req
       .url_for(path, args)
       .map(|x| x.path().into())
-      .map_err(|_| Error::from(format!("Unable to find route for [{}]", path)))
+      .map_err(|_| anyhow::anyhow!("Unable to find route for [{}]", path))
   }
 }

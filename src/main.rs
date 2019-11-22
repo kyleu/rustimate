@@ -1,3 +1,3 @@
-fn main() -> rustimate_core::Result<()> {
+fn main() -> anyhow::Result<()> {
   rustimate::go()
 }

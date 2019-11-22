@@ -1,5 +1,4 @@
 use maud::{html, Markup};
-
 use rustimate_service::RequestContext;
 
 pub(crate) fn gallery(ctx: &RequestContext) -> Markup {

@@ -1,9 +1,9 @@
 use crate::socket::ws::ClientSocket;
 
+use anyhow::Result;
 use rustimate_core::profile::UserProfile;
 use rustimate_core::session_ctx::SessionContext;
-use rustimate_core::{Error, RequestMessage, Result};
-
+use rustimate_core::RequestMessage;
 use std::rc::Rc;
 use std::sync::RwLock;
 use uuid::Uuid;
@@ -22,10 +22,10 @@ pub(crate) struct ClientContext {
 impl ClientContext {
   pub(crate) fn new() -> Result<Rc<RwLock<ClientContext>>> {
     let binary = true;
-    let window = web_sys::window().ok_or_else(|| Error::from("Can't find [window]"))?;
-    let document = window.document().ok_or_else(|| Error::from("Can't find [document]"))?;
-    let loc = &document.location().ok_or_else(|| Error::from("Can't find [location]"))?;
-    let url = loc.href().map_err(|_| Error::from("Can't find [href]"))?;
+    let window = web_sys::window().ok_or_else(|| anyhow::anyhow!("Can't find [window]"))?;
+    let document = window.document().ok_or_else(|| anyhow::anyhow!("Can't find [document]"))?;
+    let loc = &document.location().ok_or_else(|| anyhow::anyhow!("Can't find [location]"))?;
+    let url = loc.href().map_err(|_| anyhow::anyhow!("Can't find [href]"))?;
     let socket = ClientSocket::new(&url, binary)?;
     let profile = UserProfile::default();
 

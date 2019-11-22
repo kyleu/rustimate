@@ -1,6 +1,5 @@
+use anyhow::Result;
 use maud::{html, Markup};
-
-use rustimate_core::Result;
 use rustimate_core::util::NotificationLevel;
 use rustimate_service::{RequestContext, Router};
 

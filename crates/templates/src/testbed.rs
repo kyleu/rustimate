@@ -1,9 +1,7 @@
+use anyhow::Result;
 use maud::{html, Markup};
-
-use rustimate_core::Result;
-use rustimate_service::{RequestContext, Router};
-
 use rustimate_core::build_info;
+use rustimate_service::{RequestContext, Router};
 
 fn container(ctx: &RequestContext, router: &dyn Router, result: &str, content: Markup) -> Result<Markup> {
   let content = html! {

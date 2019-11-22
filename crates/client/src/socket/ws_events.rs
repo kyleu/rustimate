@@ -1,5 +1,6 @@
 use crate::ctx::ClientContext;
-use rustimate_core::Result;
+
+use anyhow::Result;
 use std::rc::Rc;
 use std::sync::RwLock;
 
