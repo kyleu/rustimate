@@ -39,7 +39,7 @@ impl EstimateSession {
 }
 
 fn slug_for(title: &str) -> String {
-  // TODO slugify
+  // slugify soon!
   title.into()
 }
 

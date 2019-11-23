@@ -33,4 +33,6 @@ pub(crate) mod socket {
 }
 pub(crate) mod templates {
   pub(crate) mod card;
+  pub(crate) mod member;
+  pub(crate) mod poll;
 }

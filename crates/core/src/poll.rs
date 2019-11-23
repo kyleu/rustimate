@@ -11,7 +11,7 @@ pub enum PollStatus {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Poll {
   id: Uuid,
-  session_id: Uuid,
+  session_key: String,
   idx: u32,
   author_id: Uuid,
   title: String,
@@ -20,8 +20,28 @@ pub struct Poll {
 }
 
 impl Poll {
+  pub fn new(id: Uuid, session_key: String, idx: u32, author_id: Uuid, title: String) -> Poll {
+    Poll {
+      id,
+      session_key,
+      idx,
+      author_id,
+      title,
+      status: PollStatus::Pending,
+      final_vote: None
+    }
+  }
+
   pub fn id(&self) -> &Uuid {
     &self.id
+  }
+
+  pub fn title(&self) -> &String {
+    &self.title
+  }
+
+  pub fn set_title(&mut self, t: String) {
+    self.title = t;
   }
 }
 

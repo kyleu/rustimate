@@ -6,6 +6,7 @@ use rustimate_core::session::EstimateSession;
 
 use anyhow::Result;
 use std::sync::Arc;
+use uuid::Uuid;
 
 #[derive(Clone, Debug)]
 pub struct SessionService {
@@ -70,13 +71,19 @@ impl SessionService {
     }
   }
 
-  pub fn add_poll(&mut self, key: &str, p: Poll) -> Result<()> {
-    let mut current = self.read_polls(key)?;
-    if current.iter().any(|x| x.id() == p.id()) {
-      Ok(())
-    } else {
-      current.push(p);
-      self.write_polls(key, current)
+  pub fn update_poll(&mut self, session_key: &str, poll_id: Uuid, title: String, author_id: Uuid) -> Result<Poll> {
+    let mut current = self.read_polls(session_key)?;
+    match current.iter_mut().find(|x| x.id() == &poll_id) {
+      Some(p) => {
+        p.set_title(title);
+        Ok(p.clone())
+      }
+      None => {
+        let p = Poll::new(poll_id, session_key.to_string(), current.len() as u32, author_id, title);
+        current.push(p.clone());
+        self.write_polls(session_key, current)?;
+        Ok(p)
+      }
     }
   }
 

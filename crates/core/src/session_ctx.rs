@@ -16,19 +16,16 @@ pub struct SessionContext {
 
 impl SessionContext {
   pub fn new(
-    session: Box<EstimateSession>, members: Vec<crate::member::Member>, connected: Vec<Uuid>, polls: Vec<crate::poll::Poll>,
+    session: EstimateSession, members: Vec<crate::member::Member>, connected: Vec<Uuid>, polls: Vec<crate::poll::Poll>,
     votes: Vec<crate::poll::Vote>
   ) -> SessionContext
   {
     SessionContext {
-      session: *session,
-      members: members.iter().map(|m| (m.user_id().clone(), m.clone())).collect(),
-      connected: connected.iter().map(|u| u.clone()).collect(),
-      polls: polls.iter().map(|p| (p.id().clone(), p.clone())).collect(),
-      votes: votes
-        .iter()
-        .map(|v| ((v.poll_id().clone(), v.user_id().clone()), v.clone()))
-        .collect()
+      session,
+      members: members.iter().map(|m| (*m.user_id(), m.clone())).collect(),
+      connected: connected.iter().copied().collect(),
+      polls: polls.iter().map(|p| (*p.id(), p.clone())).collect(),
+      votes: votes.iter().map(|v| ((*v.poll_id(), *v.user_id()), v.clone())).collect()
     }
   }
 

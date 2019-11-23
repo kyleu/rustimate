@@ -58,6 +58,17 @@ fn on_pong(ctx: &RwLock<ClientContext>, v: i64) -> Result<()> {
 
 fn on_session_joined(ctx: &RwLock<ClientContext>, session: SessionContext) -> Result<()> {
   info!("Session details received for [{}]", session.session().key());
-  ctx.write().unwrap().on_session_joined(session);
+
+  let mut svc = ctx.write().unwrap();
+  svc.replace_template(
+    "member-listing",
+    crate::templates::member::members(&svc, session.members().iter().map(|x| x.1).collect(), session.connected())
+  )?;
+  svc.replace_template(
+    "poll-listing",
+    crate::templates::poll::polls(&svc, session.polls().iter().map(|x| x.1).collect())
+  )?;
+  svc.on_session_joined(session);
+
   Ok(())
 }

@@ -73,8 +73,12 @@ impl MessageHandler {
 
   pub fn on_error(&self) {}
 
-  pub fn on_update_poll(&self, id: uuid::Uuid, title: String) {
-    slog::info!(self.log(), "Adding poll [{}: {}] for session [{}]", id, title, self.channel_id())
+  fn on_update_poll(&self, id: uuid::Uuid, title: String) -> Result<()> {
+    let mut svc = self.ctx().app().session_svc().write().unwrap();
+    let poll = svc.update_poll(self.channel_id(), id, title.clone(), *self.ctx().user_id())?;
+    self.send_to_self(ResponseMessage::PollUpdate { poll })?;
+    slog::info!(self.log(), "Updated poll [{}: {}] for session [{}]", id, title, self.channel_id());
+    Ok(())
   }
 
   pub fn log(&self) -> &slog::Logger {

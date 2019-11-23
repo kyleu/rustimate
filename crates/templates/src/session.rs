@@ -22,7 +22,7 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
         div."uk-width-1-3" {
           (crate::card(&ctx, html! {
             h4 { "Other Members" }
-            ul {
+            ul#member-listing {
               li { "No other members" }
             }
             a.(ctx.user_profile().link_class()) uk-toggle? href="#add-member-modal" { "Invite Members" }
@@ -31,10 +31,11 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
         div."uk-width-2-3" {
           (crate::card(&ctx, html! {
             h4 { "Estimates, Polls, Stories, Whatever" }
-            ul {
+            ul#poll-listing {
               li { "No polls" }
             }
             a.(ctx.user_profile().link_class()) uk-toggle? onclick="document.getElementById('poll-modal-input').value = '';" href="#add-poll-modal" { "Add Poll" }
+            a.(ctx.user_profile().link_class()) onclick=(onclick_event("update-poll", "", "'xxxxxxx'")) href="" { "Test" }
           }))
         }
         div."uk-width-1-1" {
@@ -57,7 +58,7 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
         input.uk-input#poll-modal-input type="text" placeholder="Poll Question" name="poll" {}
         p.uk-text-right {
           button.uk-button.uk-button-default.uk-modal-close type="button" { "Cancel" }
-          button.uk-button.uk-button-primary.uk-modal-close type="button" onclick=(onclick_event("add-poll", "", "document.getElementById('poll-modal-input').value")) { "Add Poll" }
+          button.uk-button.uk-button-primary.uk-modal-close type="button" onclick=(onclick_event("update-poll", "", "document.getElementById('poll-modal-input').value")) { "Add Poll" }
         }
       }
     }
