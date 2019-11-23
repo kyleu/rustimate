@@ -25,4 +25,3 @@ impl std::fmt::Display for NotificationLevel {
     write!(f, "{}", s)
   }
 }
-

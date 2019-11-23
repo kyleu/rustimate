@@ -1,5 +1,4 @@
 use rustimate_core::ResponseMessage;
-
 use std::collections::{HashMap, HashSet};
 use uuid::Uuid;
 

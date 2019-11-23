@@ -4,8 +4,8 @@ use actix_session::Session;
 use actix_web::web::{Data, Form, Path};
 use actix_web::{HttpRequest, HttpResponse};
 
-use rustimate_core::ResponseMessage;
 use rustimate_core::util::NotificationLevel;
+use rustimate_core::ResponseMessage;
 use rustimate_service::AppConfig;
 
 /// Available at `/admin`

@@ -12,9 +12,9 @@ f () {
   echo "=== $1 counts ==="
   cargo clean -p "rustimate-$1"
   cd "crates/$1"
-  cargo count --separator , --unsafe-statistics src
+  cargo count --separator , --unsafe-statistics src || echo " ::: Please install cargo-count"
   echo "=== $1 dependencies ==="
-  cargo outdated --depth=1
+  cargo outdated --depth=1 || echo " ::: Please install cargo-outdated"
   cd ../..
 }
 
@@ -30,20 +30,20 @@ f "templates"
 echo "=== rustimate counts ==="
 cargo clean -p rustimate
 cd "src"
-cargo count --separator , --unsafe-statistics
+cargo count --separator , --unsafe-statistics || echo " ::: Please install cargo-count"
 echo "=== rustimate dependencies ==="
-cargo outdated --depth=1
+cargo outdated --depth=1 || echo " ::: Please install cargo-outdated"
 cd ..
 
 echo "=== (total) ==="
-cargo count --separator , --unsafe-statistics -a --exclude=$(cat .gitignore) --exclude=target --exclude=project --exclude=crates/assets/embed --exclude=crates/assets/stylesheets/uikit --exclude=crates/client/pkg --exclude=crates/client/www
-cargo deps --depth 1 --include-versions --dev-deps | dot -Tpng > "target/dependencies.png"
+cargo count --separator , --unsafe-statistics -a --exclude=$(cat .gitignore) --exclude=target --exclude=project --exclude=crates/assets/embed --exclude=crates/assets/stylesheets/uikit --exclude=crates/client/pkg --exclude=crates/client/www || echo " ::: Please install cargo-count"
+cargo deps --depth 1 --include-versions --dev-deps | dot -Tpng > "target/dependencies.png" || echo " ::: Please install cargo-deps"
 
 echo "=== Advisories ==="
-cargo audit
+cargo audit || echo " ::: Please install cargo-audit"
 
 echo "=== Linting ==="
-cargo clippy
+cargo clippy || echo " ::: Please install clippy"
 echo "=== Linting Client ==="
 cd crates/client
-cargo clippy
+cargo clippy || echo " ::: Please install clippy"

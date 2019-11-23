@@ -1,10 +1,10 @@
 use crate::ctx::ClientContext;
 
-use maud::html;
 use anyhow::Result;
+use maud::html;
 use rustimate_core::profile::UserProfile;
-use rustimate_core::util::NotificationLevel;
 use rustimate_core::session_ctx::SessionContext;
+use rustimate_core::util::NotificationLevel;
 use rustimate_core::ResponseMessage;
 use std::sync::RwLock;
 
@@ -25,7 +25,7 @@ impl MessageHandler {
         connected,
         polls,
         votes
-      } => on_session_joined(ctx, SessionContext::new(session, members, connected, polls, votes))?,
+      } => on_session_joined(ctx, SessionContext::new(*session, members, connected, polls, votes))?,
       _ => warn!("Unhandled ResponseMessage [{:?}]", msg)
     };
     Ok(())

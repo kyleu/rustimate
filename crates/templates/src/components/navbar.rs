@@ -1,7 +1,6 @@
-use rustimate_service::{RequestContext, Router};
-
 use anyhow::Result;
 use maud::{html, Markup};
+use rustimate_service::{RequestContext, Router};
 
 pub(crate) fn navbar(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
   Ok(html! {

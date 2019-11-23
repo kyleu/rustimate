@@ -15,4 +15,3 @@ pub fn list(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
   );
   crate::section(ctx, router, "Project Administration", content)
 }
-

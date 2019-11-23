@@ -1,7 +1,7 @@
 use crate::member::Member;
-use crate::util::NotificationLevel;
 use crate::poll::{Poll, Vote};
 use crate::session::EstimateSession;
+use crate::util::NotificationLevel;
 
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};

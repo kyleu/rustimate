@@ -1,7 +1,7 @@
 # Scripts
 
-There's a few scripts in the `./bin` directory to help you build, run, test, and publish rustimate.
-They're designed for macOS, but should work on Linux or Windows (with WSL).
+There's scripts in the `./bin` directory to help you build, run, test, and publish rustimate.
+They're designed for macOS, but should work on Linux or Windows (via WSL).
 
 - `build`: Runs the code formatter, checks all the projects, then builds binaries for Linux, macOS, Windows, and Docker.
 - `build-client`: Runs `wasm-pack` for the client Rust code, and `npm install` to bundle it to JavaScript.

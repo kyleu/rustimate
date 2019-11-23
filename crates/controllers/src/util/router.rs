@@ -1,7 +1,6 @@
-use rustimate_service::Router;
-
 use actix_web::HttpRequest;
 use anyhow::Result;
+use rustimate_service::Router;
 
 #[derive(derive_more::Constructor, Debug)]
 pub(crate) struct RequestRouter {

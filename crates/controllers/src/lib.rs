@@ -18,22 +18,19 @@
 //! `rustimate-controllers` contains actix-web HTTP controllers, usually calling methods from [rustimate-service](rustimate_service).
 
 pub mod admin;
+pub mod forms {
+  pub mod profile_form;
+}
+pub mod home;
 pub mod routes;
-
+pub mod session;
+pub mod static_file;
+pub mod testbed;
 pub mod util {
   pub mod actions;
   pub mod ctx;
   pub mod router;
 }
-
-pub mod forms {
-  pub mod profile_form;
-}
-
-pub mod home;
-pub mod session;
-pub mod static_file;
-pub mod testbed;
 pub mod websocket;
 pub mod websocket_msg;
 

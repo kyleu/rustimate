@@ -1,6 +1,5 @@
-use rustimate_core::messages::req::RequestMessage;
-
 use anyhow::Result;
+use rustimate_core::messages::req::RequestMessage;
 use wasm_bindgen::prelude::{Closure, JsValue};
 use wasm_bindgen::JsCast;
 use web_sys::{ErrorEvent, MessageEvent, WebSocket};
@@ -102,7 +101,7 @@ fn calc_url(src: &str) -> String {
     debug!("Using [test] channel [{}]", p);
     p
   } else {
-    format!("{}", cleaned)
+    cleaned.into()
   };
   format!("{}://{}/connect", protocol, path)
 }

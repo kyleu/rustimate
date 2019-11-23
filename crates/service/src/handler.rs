@@ -61,17 +61,16 @@ impl MessageHandler {
     Vec::new()
   }
 
-  pub fn on_message(&self, msg: RequestMessage) -> Result<Vec<ResponseMessage>> {
-    let mut ret = Vec::new();
+  pub fn on_message(&self, msg: RequestMessage) -> Result<()> {
     match msg {
-      RequestMessage::Ping { v } => ret.push(ResponseMessage::Pong { v }),
+      RequestMessage::Ping { v } => self.send_to_self(ResponseMessage::Pong { v }),
       RequestMessage::UpdatePoll { id, title } => self.on_update_poll(id, title),
-      msg => slog::warn!(self.log, "Unhandled RequestMessage [{:?}]", msg)
+      msg => {
+        slog::warn!(self.log, "Unhandled RequestMessage [{:?}]", msg);
+        Ok(())
+      }
     }
-    Ok(ret)
   }
-
-  pub fn on_error(&self) {}
 
   fn on_update_poll(&self, id: uuid::Uuid, title: String) -> Result<()> {
     let mut svc = self.ctx().app().session_svc().write().unwrap();
@@ -83,5 +82,10 @@ impl MessageHandler {
 
   pub fn log(&self) -> &slog::Logger {
     &self.log
+  }
+
+  fn send_to_self(&self, msg: ResponseMessage) -> Result<()> {
+    self.ctx().app().send_connection(self.connection_id(), msg);
+    Ok(())
   }
 }

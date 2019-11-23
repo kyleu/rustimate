@@ -3,8 +3,6 @@ use crate::files::FileService;
 use crate::session::SessionService;
 
 use rustimate_core::ResponseMessage;
-
-use slog;
 use std::sync::{Arc, RwLock};
 
 /// Contains information about the running application

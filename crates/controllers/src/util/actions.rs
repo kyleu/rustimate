@@ -1,11 +1,10 @@
-use rustimate_service::Router;
-use rustimate_service::{AppConfig, RequestContext};
-
 use actix_session::Session;
 use actix_web::http::header::LOCATION;
 use actix_web::web::{Data, Path};
 use actix_web::{HttpRequest, HttpResponse};
 use anyhow::Result;
+use rustimate_service::Router;
+use rustimate_service::{AppConfig, RequestContext};
 
 pub(crate) fn act<F>(session: &Session, cfg: &Data<AppConfig>, req: HttpRequest, f: F) -> HttpResponse
 where F: Fn(&RequestContext, &dyn Router) -> Result<maud::Markup> {

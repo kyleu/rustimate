@@ -1,5 +1,5 @@
-use rustimate_core::profile::UserProfile;
 use anyhow::Result;
+use rustimate_core::profile::UserProfile;
 
 pub fn load(files: &crate::files::FileService, user_id: uuid::Uuid) -> UserProfile {
   let path = format!("profile/{}", user_id);

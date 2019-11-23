@@ -1,5 +1,6 @@
-use anyhow::Result;
 use crate::ctx::ClientContext;
+
+use anyhow::Result;
 use rustimate_core::RequestMessage;
 
 pub(crate) struct EventHandler {}

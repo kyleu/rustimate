@@ -16,7 +16,7 @@ pub(crate) struct ClientContext {
   socket: ClientSocket,
   connection_id: Option<Uuid>,
   session_ctx: Option<SessionContext>,
-  profile: UserProfile
+  user_profile: UserProfile
 }
 
 impl ClientContext {
@@ -27,7 +27,7 @@ impl ClientContext {
     let loc = &document.location().ok_or_else(|| anyhow::anyhow!("Can't find [location]"))?;
     let url = loc.href().map_err(|_| anyhow::anyhow!("Can't find [href]"))?;
     let socket = ClientSocket::new(&url, binary)?;
-    let profile = UserProfile::default();
+    let user_profile = UserProfile::default();
 
     let rc = Rc::new(RwLock::new(ClientContext {
       window,
@@ -35,7 +35,7 @@ impl ClientContext {
       socket,
       connection_id: None,
       session_ctx: None,
-      profile
+      user_profile
     }));
 
     crate::socket::ws_events::wire_socket(Rc::clone(&rc));
@@ -54,10 +54,6 @@ impl ClientContext {
     &self.socket
   }
 
-  pub(crate) fn profile(&self) -> &UserProfile {
-    &self.profile
-  }
-
   pub(crate) fn connection_id(&self) -> &Option<Uuid> {
     &self.connection_id
   }
@@ -66,14 +62,18 @@ impl ClientContext {
     &self.session_ctx
   }
 
+  pub(crate) fn user_profile(&self) -> &UserProfile {
+    &self.user_profile
+  }
+
   pub(crate) fn on_open(&self) -> Result<()> {
     Ok(())
   }
 
-  pub(crate) fn on_connected(&mut self, connection_id: Uuid, profile: UserProfile, binary: bool) {
+  pub(crate) fn on_connected(&mut self, connection_id: Uuid, user_profile: UserProfile, binary: bool) {
     self.socket.set_binary(binary);
     self.connection_id = Some(connection_id);
-    self.profile = profile;
+    self.user_profile = user_profile;
   }
 
   pub(crate) fn on_session_joined(&mut self, s: SessionContext) {
