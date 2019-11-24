@@ -2,10 +2,9 @@ use anyhow::Result;
 use maud::{html, Markup};
 use rustimate_core::util::NotificationLevel;
 use rustimate_service::{RequestContext, Router};
+use uuid::Uuid;
 
-pub fn connections(
-  ctx: &RequestContext, router: &dyn Router, conns: Vec<uuid::Uuid>, channels: Vec<(String, Vec<uuid::Uuid>)>
-) -> Result<Markup> {
+pub fn connections(ctx: &RequestContext, router: &dyn Router, conns: Vec<Uuid>, channels: Vec<(String, Vec<Uuid>)>) -> Result<Markup> {
   let conn_content = crate::components::card::card(ctx, html! {
     h3 { (format!("[{}] Connections", conns.len())) }
     ul {
@@ -37,7 +36,7 @@ pub fn connections(
   crate::section(ctx, router, "Connection Listing", content)
 }
 
-pub fn connection_detail(ctx: &RequestContext, router: &dyn Router, id: uuid::Uuid) -> Result<Markup> {
+pub fn connection_detail(ctx: &RequestContext, router: &dyn Router, id: Uuid) -> Result<Markup> {
   let content = html!(
     h3 { (format!("Connection [{}]", id)) }
     (send_form())

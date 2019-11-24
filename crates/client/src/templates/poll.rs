@@ -6,7 +6,9 @@ use rustimate_core::poll::Poll;
 pub(crate) fn poll(ctx: &ClientContext, p: &Poll) -> Markup {
   html!(
     li {
-      a.(ctx.user_profile().link_class()) href="" { (p.title()) }
+      a.(ctx.user_profile().link_class()) onclick=(crate::html::onclick_event("poll-detail", &p.id().to_string(), "")) {
+        (p.title())
+      }
     }
   )
 }

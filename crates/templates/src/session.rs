@@ -23,7 +23,7 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
           (crate::card(&ctx, html! {
             h4 { "Other Members" }
             ul#member-listing {
-              li { "No other members" }
+              li { "Loading members..." }
             }
             a.(ctx.user_profile().link_class()) uk-toggle? href="#add-member-modal" { "Invite Members" }
           }))
@@ -32,7 +32,7 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
           (crate::card(&ctx, html! {
             h4 { "Estimates, Polls, Stories, Whatever" }
             ul#poll-listing {
-              li { "No polls" }
+              li { "Loading polls..." }
             }
             a.(ctx.user_profile().link_class()) uk-toggle? onclick="document.getElementById('poll-modal-input').value = '';" href="#add-poll-modal" { "Add Poll" }
             a.(ctx.user_profile().link_class()) onclick=(onclick_event("update-poll", "", "'xxxxxxx'")) href="" { "Test" }
@@ -59,6 +59,24 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
         p.uk-text-right {
           button.uk-button.uk-button-default.uk-modal-close type="button" { "Cancel" }
           button.uk-button.uk-button-primary.uk-modal-close type="button" onclick=(onclick_event("update-poll", "", "document.getElementById('poll-modal-input').value")) { "Add Poll" }
+        }
+      }
+    }
+    div#member-detail-modal uk-modal? {
+      div.uk-modal-dialog.uk-modal-body {
+        h2.uk-modal-title#member-detail-name { "..." }
+        div#member-detail-content { "..." }
+        p.uk-text-right {
+          button.uk-button.uk-button-default.uk-modal-close type="button" { "Close" }
+        }
+      }
+    }
+    div#poll-detail-modal uk-modal? {
+      div.uk-modal-dialog.uk-modal-body {
+        h2.uk-modal-title#poll-detail-title { "..." }
+        div#poll-detail-content { "..." }
+        p.uk-text-right {
+          button.uk-button.uk-button-default.uk-modal-close type="button" { "Close" }
         }
       }
     }

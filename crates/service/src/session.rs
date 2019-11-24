@@ -1,6 +1,6 @@
 use crate::files::FileService;
 
-use rustimate_core::member::Member;
+use rustimate_core::member::{Member, MemberRole};
 use rustimate_core::poll::{Poll, Vote};
 use rustimate_core::session::EstimateSession;
 
@@ -46,13 +46,32 @@ impl SessionService {
     }
   }
 
-  pub fn add_member(&mut self, key: &str, m: Member) -> Result<()> {
-    let mut current = self.read_members(key)?;
-    if current.iter().any(|x| x.user_id() == m.user_id()) {
-      Ok(())
-    } else {
-      current.push(m);
-      self.write_members(key, current)
+  pub fn update_member(&mut self, session_key: &str, user_id: Uuid, name: String, role: MemberRole) -> Result<Member> {
+    let mut current = self.read_members(session_key)?;
+    let member = match current.iter_mut().find(|x| x.user_id() == &user_id) {
+      Some(m) => {
+        m.set_name(name);
+        m.set_role(role);
+        Ok(m.clone())
+      }
+      None => {
+        let m = Member::new(user_id, name, role);
+        current.push(m.clone());
+        Ok(m)
+      }
+    };
+    self.write_members(session_key, current)?;
+    member
+  }
+
+  pub fn update_member_name(&mut self, session_key: &str, user_id: Uuid, name: String) -> Result<Member> {
+    let mut current = self.read_members(session_key)?;
+    match current.iter_mut().find(|x| x.user_id() == &user_id) {
+      Some(m) => {
+        m.set_name(name);
+        Ok(m.clone())
+      }
+      None => Err(anyhow::anyhow!(format!("Cannot find user [{}]", user_id)))
     }
   }
 

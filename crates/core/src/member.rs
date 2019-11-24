@@ -10,7 +10,7 @@ pub enum MemberRole {
   Invited
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, derive_more::Constructor, Deserialize, Serialize)]
 pub struct Member {
   user_id: Uuid,
   name: String,
@@ -26,7 +26,15 @@ impl Member {
     &self.name
   }
 
+  pub fn set_name(&mut self, t: String) {
+    self.name = t;
+  }
+
   pub fn role(&self) -> &MemberRole {
     &self.role
+  }
+
+  pub fn set_role(&mut self, r: MemberRole) {
+    self.role = r;
   }
 }

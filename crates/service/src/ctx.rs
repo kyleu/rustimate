@@ -2,6 +2,7 @@ use crate::cfg::AppConfig;
 
 use anyhow::Result;
 use rustimate_core::profile::UserProfile;
+use uuid::Uuid;
 
 /// Provides reverse routing of urls
 pub trait Router {
@@ -18,7 +19,7 @@ pub trait Router {
 /// Contains information about the application and current user, along with common components
 pub struct RequestContext {
   app: AppConfig,
-  user_id: uuid::Uuid,
+  user_id: Uuid,
   user_profile: UserProfile,
   flash: Option<(String, String)>,
   log: slog::Logger
@@ -32,7 +33,7 @@ impl std::fmt::Debug for RequestContext {
 
 impl RequestContext {
   pub fn new(
-    app: AppConfig, user_id: uuid::Uuid, user_profile: UserProfile, log: slog::Logger, flash: Option<(String, String)>
+    app: AppConfig, user_id: Uuid, user_profile: UserProfile, log: slog::Logger, flash: Option<(String, String)>
   ) -> RequestContext {
     let log = log.new(slog::o!("user_id" => user_id.to_string()));
     RequestContext {
@@ -48,7 +49,7 @@ impl RequestContext {
     &self.app
   }
 
-  pub fn user_id(&self) -> &uuid::Uuid {
+  pub fn user_id(&self) -> &Uuid {
     &self.user_id
   }
 

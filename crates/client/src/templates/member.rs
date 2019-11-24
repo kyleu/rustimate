@@ -3,30 +3,27 @@ use crate::ctx::ClientContext;
 use maud::{html, Markup};
 use rustimate_core::member::Member;
 use std::collections::HashSet;
+use uuid::Uuid;
 
 pub(crate) fn member(ctx: &ClientContext, m: &Member, conn: bool) -> Markup {
   html!(
     li {
-      a.(ctx.user_profile().link_class()) href="" {
-        @if conn {
-          span { "[Connected]" }
-        } else {
-          span { "[Not Connected]" }
-        }
+      a.(ctx.user_profile().link_class()) onclick=(crate::html::onclick_event("member-detail", &m.user_id().to_string(), "")) {
         (m.name())
+        @if conn {
+          span { " [Connected]" }
+        } else {
+          span { " [Not Connected]" }
+        }
       }
     }
   )
 }
 
-pub(crate) fn members(ctx: &ClientContext, ms: Vec<&Member>, conn: &HashSet<uuid::Uuid>) -> Markup {
+pub(crate) fn members(ctx: &ClientContext, ms: Vec<&Member>, conn: &HashSet<Uuid>) -> Markup {
   html!(
-    @if ms.len() < 2 {
-      li { "No other members" }
-    } else {
-      @for m in ms {
-        (member(ctx, m, conn.contains(m.user_id())))
-      }
+    @for m in ms {
+      (member(ctx, m, conn.contains(m.user_id())))
     }
   )
 }

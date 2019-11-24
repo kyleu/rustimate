@@ -4,6 +4,7 @@ use crate::session::SessionService;
 
 use rustimate_core::ResponseMessage;
 use std::sync::{Arc, RwLock};
+use uuid::Uuid;
 
 /// Contains information about the running application
 #[derive(Clone, Debug)]
@@ -53,12 +54,16 @@ impl AppConfig {
     &self.connections
   }
 
+  pub fn send_connection(&self, id: &Uuid, msg: ResponseMessage) {
+    self.connections().read().unwrap().send_connection(id, msg);
+  }
+
   pub fn send_channel(&self, key: &str, msg: ResponseMessage) {
     self.connections().read().unwrap().send_channel(key, msg);
   }
 
-  pub fn send_connection(&self, id: &uuid::Uuid, msg: ResponseMessage) {
-    self.connections().read().unwrap().send_connection(id, msg);
+  pub fn send_channel_except(&self, key: &str, exclude: Vec<&Uuid>, msg: ResponseMessage) {
+    self.connections().read().unwrap().send_channel_except(key, exclude, msg);
   }
 
   pub fn session_svc(&self) -> &RwLock<SessionService> {

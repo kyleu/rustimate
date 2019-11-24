@@ -11,7 +11,7 @@ pub enum RequestMessage {
   // Session messages
   JoinSession { id: Uuid },
   UpdateSession { name: String, choices: Vec<String> },
-  UpdateProfile { name: String },
+  UpdateSelf { name: String },
   UpdatePoll { id: Uuid, title: String },
   // SetPollStatus { poll: Uuid, status: PollStatusType },
   SubmitVote { poll: Uuid, vote: String }
