@@ -40,6 +40,10 @@ impl Poll {
     &self.title
   }
 
+  pub fn idx(&self) -> u32 {
+    self.idx
+  }
+
   pub fn set_title(&mut self, t: String) {
     self.title = t;
   }

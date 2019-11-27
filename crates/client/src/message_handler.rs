@@ -2,6 +2,8 @@ use crate::ctx::ClientContext;
 
 use anyhow::Result;
 use maud::html;
+use rustimate_core::member::Member;
+use rustimate_core::poll::Poll;
 use rustimate_core::profile::UserProfile;
 use rustimate_core::session_ctx::SessionContext;
 use rustimate_core::ResponseMessage;
@@ -31,6 +33,10 @@ impl MessageHandler {
         polls,
         votes
       } => on_session_joined(ctx, SessionContext::new(*session, members, connected, polls, votes)),
+
+      ResponseMessage::PollUpdate { poll } => on_update_poll(ctx, poll),
+      ResponseMessage::MemberUpdate { member } => on_update_member(ctx, member),
+
       _ => {
         warn!("Unhandled ResponseMessage [{:?}]", msg);
         Ok(())
@@ -62,15 +68,30 @@ fn on_session_joined(ctx: &RwLock<ClientContext>, session: SessionContext) -> Re
   info!("Session details received for [{}]", session.session().key());
 
   let mut svc = ctx.write().unwrap();
+
+  let mut members: Vec<&Member> = session.members().iter().map(|x| x.1).collect();
+  members.sort_by(|x, y| x.name().partial_cmp(&y.name()).unwrap());
   svc.replace_template(
     "member-listing",
-    crate::templates::member::members(&svc, session.members().iter().map(|x| x.1).collect(), session.connected())
+    crate::templates::member::members(&svc, members, session.connected())
   )?;
+
+  let mut polls: Vec<&Poll> = session.polls().iter().map(|x| x.1).collect();
+  polls.sort_by(|x, y| x.idx().partial_cmp(&y.idx()).unwrap());
   svc.replace_template(
     "poll-listing",
-    crate::templates::poll::polls(&svc, session.polls().iter().map(|x| x.1).collect())
+    crate::templates::poll::polls(&svc, polls)
   )?;
+
   svc.on_session_joined(session);
 
+  Ok(())
+}
+
+fn on_update_poll(ctx: &RwLock<ClientContext>, poll: Poll) -> Result<()> {
+  Ok(())
+}
+
+fn on_update_member(ctx: &RwLock<ClientContext>, member: Member) -> Result<()> {
   Ok(())
 }

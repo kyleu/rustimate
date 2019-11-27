@@ -1,6 +1,7 @@
 use crate::ctx::ClientContext;
 
 use anyhow::Result;
+use maud::html;
 use rustimate_core::util::NotificationLevel;
 use rustimate_core::RequestMessage;
 use uuid::Uuid;
@@ -13,13 +14,9 @@ impl EventHandler {
       "send-ping" => ctx.send(RequestMessage::Ping {
         v: js_sys::Date::now() as i64
       }),
-      "update-poll" if v.is_empty() => crate::logging::notify(NotificationLevel::Warn, "Enter a question next time"),
-      "update-poll" => ctx.send(RequestMessage::UpdatePoll {
-        id: Uuid::new_v4(),
-        title: v.into()
-      }),
-      "member-detail" => on_member_detail(),
-      "poll-detail" => on_poll_detail(),
+      "update-poll" => on_update_poll(ctx, v),
+      "member-detail" => on_member_detail(ctx, Uuid::parse_str(k).unwrap()),
+      "poll-detail" => on_poll_detail(ctx, Uuid::parse_str(k).unwrap()),
       _ => {
         warn!("Unhandled event [{}] with [k:{}], [v:{}]", t, k, v);
         Ok(())
@@ -28,12 +25,35 @@ impl EventHandler {
   }
 }
 
-fn on_member_detail() -> Result<()> {
+fn on_update_poll(ctx: &ClientContext, v: &str) -> Result<()> {
+  if v.is_empty() {
+    crate::logging::notify(NotificationLevel::Warn, "Enter a question next time")
+  } else {
+    ctx.send(RequestMessage::UpdatePoll {
+      id: Uuid::new_v4(),
+      title: v.into()
+    })
+  }
+}
+
+fn on_member_detail(ctx: &ClientContext, id: Uuid) -> Result<()> {
+  if let Some(sc) = ctx.session_ctx() {
+    if let Some(m) = sc.members().get(&id) {
+      ctx.replace_template("member-detail-name", html!((m.name())))?;
+      ctx.replace_template("member-detail-content", crate::templates::member::member_detail(ctx, m, false))?;
+    }
+  }
   crate::js::show_modal("member-detail-modal");
   Ok(())
 }
 
-fn on_poll_detail() -> Result<()> {
+fn on_poll_detail(ctx: &ClientContext, id: Uuid) -> Result<()> {
+  if let Some(sc) = ctx.session_ctx() {
+    if let Some(p) = sc.polls().get(&id) {
+      ctx.replace_template("poll-detail-title", html!((p.title())))?;
+      ctx.replace_template("poll-detail-content", crate::templates::poll::poll_detail(ctx, p))?;
+    }
+  }
   crate::js::show_modal("poll-detail-modal");
   Ok(())
 }

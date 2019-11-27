@@ -64,7 +64,7 @@ impl ClientContext {
     &self.user_id
   }
 
-  pub(crate) fn _session_ctx(&self) -> &Option<SessionContext> {
+  pub(crate) fn session_ctx(&self) -> &Option<SessionContext> {
     &self.session_ctx
   }
 

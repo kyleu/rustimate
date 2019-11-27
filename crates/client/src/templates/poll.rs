@@ -3,7 +3,17 @@ use crate::ctx::ClientContext;
 use maud::{html, Markup};
 use rustimate_core::poll::Poll;
 
-pub(crate) fn poll(ctx: &ClientContext, p: &Poll) -> Markup {
+pub(crate) fn poll_summary(ctx: &ClientContext, p: &Poll) -> Markup {
+  html!(
+    li {
+      a.(ctx.user_profile().link_class()) onclick=(crate::html::onclick_event("poll-detail", &p.id().to_string(), "")) {
+        (p.title())
+      }
+    }
+  )
+}
+
+pub(crate) fn poll_detail(ctx: &ClientContext, p: &Poll) -> Markup {
   html!(
     li {
       a.(ctx.user_profile().link_class()) onclick=(crate::html::onclick_event("poll-detail", &p.id().to_string(), "")) {
@@ -19,7 +29,7 @@ pub(crate) fn polls(ctx: &ClientContext, ps: Vec<&Poll>) -> Markup {
       li { "No polls" }
     } else {
       @for p in ps {
-        (poll(ctx, p))
+        (poll_summary(ctx, p))
       }
     }
   )
