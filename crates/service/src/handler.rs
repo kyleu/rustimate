@@ -116,12 +116,12 @@ impl MessageHandler {
   }
 
   fn send_to_self(&self, msg: ResponseMessage) -> Result<()> {
-    self.ctx().app().send_connection(self.connection_id(), msg);
+    self.ctx().app().connections().send_connection(self.connection_id(), msg);
     Ok(())
   }
 
   fn send_to_channel(&self, msg: ResponseMessage) -> Result<()> {
-    self.ctx().app().send_channel(self.channel_id(), msg);
+    self.ctx().app().connections().send_channel(self.channel_id(), msg);
     Ok(())
   }
 
@@ -129,6 +129,7 @@ impl MessageHandler {
     self
       .ctx()
       .app()
+      .connections()
       .send_channel_except(self.channel_id(), vec![self.connection_id()], msg);
     Ok(())
   }
