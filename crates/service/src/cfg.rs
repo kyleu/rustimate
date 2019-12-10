@@ -2,7 +2,7 @@ use crate::conn::ConnectionCache;
 use crate::files::FileService;
 use crate::session::SessionService;
 
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
 
 /// Contains information about the running application
 #[derive(Clone, Debug)]
@@ -12,21 +12,21 @@ pub struct AppConfig {
   port: u16,
   files: Arc<FileService>,
   connections: Arc<ConnectionCache>,
-  session_svc: Arc<RwLock<SessionService>>,
+  session_svc: Arc<SessionService>,
   root_logger: slog::Logger,
   verbose: bool
 }
 
 impl AppConfig {
   pub fn new(task: String, address: String, port: u16, cfg_dir: String, root_logger: slog::Logger, verbose: bool) -> AppConfig {
-    let files = Arc::new(FileService::new(&cfg_dir, &root_logger));
+    let files = FileService::new(&cfg_dir, &root_logger);
     AppConfig {
       task,
       address,
       port,
-      files: Arc::clone(&files),
+      files: Arc::new(files.clone()),
       connections: Arc::new(ConnectionCache::new(&root_logger)),
-      session_svc: Arc::new(RwLock::new(SessionService::new(Arc::clone(&files), root_logger.clone()))),
+      session_svc: Arc::new(SessionService::new(files, root_logger.clone())),
       root_logger,
       verbose
     }
@@ -52,7 +52,7 @@ impl AppConfig {
     &self.connections
   }
 
-  pub fn session_svc(&self) -> &RwLock<SessionService> {
+  pub fn session_svc(&self) -> &SessionService {
     &self.session_svc
   }
 

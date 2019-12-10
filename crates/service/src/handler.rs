@@ -49,19 +49,14 @@ impl MessageHandler {
     let join_session = {
       let svc = self.ctx.app().session_svc();
 
-      let role = if svc.read().unwrap().read_members(&self.channel_id)?.is_empty() {
+      let role = if svc.read_members(&self.channel_id)?.is_empty() {
         MemberRole::Creator
       } else {
         MemberRole::Participant
       };
-      let member =
-        svc
-          .write()
-          .unwrap()
-          .update_member(&self.channel_id, *self.ctx.user_id(), self.ctx.user_profile().name().clone(), role)?;
+      let member = svc.update_member(&self.channel_id, *self.ctx.user_id(), self.ctx.user_profile().name().clone(), role)?;
       self.send_to_channel_except_self(ResponseMessage::MemberUpdate { member })?;
 
-      let svc = svc.read().unwrap();
       ResponseMessage::SessionJoined {
         session: Box::new(svc.read_session(&self.channel_id)?),
         members: svc.read_members(&self.channel_id)?,
@@ -90,7 +85,7 @@ impl MessageHandler {
   }
 
   fn on_update_self(&self, name: String) -> Result<()> {
-    let mut svc = self.ctx().app().session_svc().write().unwrap();
+    let svc = self.ctx().app().session_svc();
     let member = svc.update_member_name(self.channel_id(), *self.ctx().user_id(), name.clone())?;
     self.send_to_channel(ResponseMessage::MemberUpdate { member })?;
     slog::info!(
@@ -104,7 +99,7 @@ impl MessageHandler {
   }
 
   fn on_update_poll(&self, id: Uuid, title: String) -> Result<()> {
-    let mut svc = self.ctx().app().session_svc().write().unwrap();
+    let svc = self.ctx().app().session_svc();
     let poll = svc.update_poll(self.channel_id(), id, title.clone(), *self.ctx().user_id())?;
     self.send_to_channel(ResponseMessage::PollUpdate { poll })?;
     slog::info!(self.log(), "Updated poll [{}: {}] for session [{}]", id, title, self.channel_id());
