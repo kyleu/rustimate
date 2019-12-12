@@ -36,6 +36,18 @@ impl EstimateSession {
   pub fn title(&self) -> &String {
     &self.title
   }
+
+  pub fn set_title(&mut self, title: String) {
+    self.title = title;
+  }
+
+  pub fn choices(&self) -> &Vec<String> {
+    &self.choices
+  }
+
+  pub fn set_choices(&mut self, choices: Vec<String>) {
+    self.choices = choices;
+  }
 }
 
 fn slug_for(title: &str) -> String {

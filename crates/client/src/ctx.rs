@@ -1,8 +1,8 @@
+use crate::session_ctx::SessionContext;
 use crate::socket::ws::ClientSocket;
 
 use anyhow::Result;
 use rustimate_core::profile::UserProfile;
-use rustimate_core::session_ctx::SessionContext;
 use rustimate_core::RequestMessage;
 use std::rc::Rc;
 use std::sync::RwLock;

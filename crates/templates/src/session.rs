@@ -11,12 +11,22 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
       div.uk-margin-top.uk-grid-small uk-grid? {
         div."uk-width-1-3" {
           (crate::card(&ctx, html! {
-            h3 { (ctx.user_profile().name()) }
+            h3.left style="margin: 0;" { (ctx.user_profile().name()) }
+            div.right {
+              a.(ctx.user_profile().link_class()) href="" onclick=(onclick_event("profile-detail", "", "")) title="Change Name" {
+                span data-uk-icon="icon: cog" {}
+              }
+            }
           }))
         }
         div."uk-width-2-3" {
           (crate::card(&ctx, html! {
-            h3 { (es.title()) }
+            h3.left style="margin: 0;" { (es.title()) }
+            div.right {
+              a.(ctx.user_profile().link_class()) href="" onclick=(onclick_event("session-detail", "", "")) title="Edit Title" {
+                span data-uk-icon="icon: cog" {}
+              }
+            }
           }))
         }
         div."uk-width-1-3" {
@@ -35,6 +45,7 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
               li { "Loading polls..." }
             }
             a.(ctx.user_profile().link_class()) uk-toggle? onclick="document.getElementById('poll-modal-input').value = '';" href="#add-poll-modal" { "Add Poll" }
+            " "
             a.(ctx.user_profile().link_class()) onclick=(onclick_event("update-poll", "", "'xxxxxxx'")) href="" { "Test" }
           }))
         }
@@ -77,6 +88,26 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
         div#poll-detail-content { "..." }
         p.uk-text-right {
           button.uk-button.uk-button-default.uk-modal-close type="button" { "Close" }
+        }
+      }
+    }
+    div#profile-detail-modal uk-modal? {
+      div.uk-modal-dialog.uk-modal-body {
+        h2.uk-modal-title { "Edit Profile" }
+        input.uk-input#profile-detail-modal-input type="text" placeholder="Name" name="name" {}
+        p.uk-text-right {
+          button.uk-button.uk-button-default.uk-modal-close type="button" { "Cancel" }
+          button.uk-button.uk-button-primary.uk-modal-close type="button" onclick=(onclick_event("update-profile", "", "document.getElementById('profile-detail-modal-input').value")) { "Change Name" }
+        }
+      }
+    }
+    div#session-detail-modal uk-modal? {
+      div.uk-modal-dialog.uk-modal-body {
+        h2.uk-modal-title { "Edit Session" }
+        input.uk-input#session-detail-modal-input type="text" placeholder="Name" name="name" {}
+        p.uk-text-right {
+          button.uk-button.uk-button-default.uk-modal-close type="button" { "Cancel" }
+          button.uk-button.uk-button-primary.uk-modal-close type="button" onclick=(onclick_event("update-session", "", "document.getElementById('session-detail-modal-input').value")) { "Change Name" }
         }
       }
     }

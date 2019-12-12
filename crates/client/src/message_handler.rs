@@ -1,11 +1,12 @@
 use crate::ctx::ClientContext;
+use crate::session_ctx::SessionContext;
 
 use anyhow::Result;
 use maud::html;
 use rustimate_core::member::Member;
 use rustimate_core::poll::Poll;
 use rustimate_core::profile::UserProfile;
-use rustimate_core::session_ctx::SessionContext;
+use rustimate_core::session::EstimateSession;
 use rustimate_core::ResponseMessage;
 use std::sync::RwLock;
 use uuid::Uuid;
@@ -34,8 +35,9 @@ impl MessageHandler {
         votes
       } => on_session_joined(ctx, SessionContext::new(*session, members, connected, polls, votes)),
 
-      ResponseMessage::PollUpdate { poll } => on_update_poll(ctx, poll),
-      ResponseMessage::MemberUpdate { member } => on_update_member(ctx, member),
+      ResponseMessage::UpdateSession { session } => on_update_session(ctx, session),
+      ResponseMessage::UpdatePoll { poll } => on_update_poll(ctx, poll),
+      ResponseMessage::UpdateMember { member } => on_update_member(ctx, member),
 
       _ => {
         warn!("Unhandled ResponseMessage [{:?}]", msg);
@@ -88,10 +90,14 @@ fn on_session_joined(ctx: &RwLock<ClientContext>, session: SessionContext) -> Re
   Ok(())
 }
 
+fn on_update_member(ctx: &RwLock<ClientContext>, member: Member) -> Result<()> {
+  Ok(())
+}
+
 fn on_update_poll(ctx: &RwLock<ClientContext>, poll: Poll) -> Result<()> {
   Ok(())
 }
 
-fn on_update_member(ctx: &RwLock<ClientContext>, member: Member) -> Result<()> {
+fn on_update_session(ctx: &RwLock<ClientContext>, session: EstimateSession) -> Result<()> {
   Ok(())
 }

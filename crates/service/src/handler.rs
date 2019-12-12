@@ -16,9 +16,8 @@ pub struct MessageHandler {
 
 impl MessageHandler {
   pub fn new(connection_id: Uuid, channel_id: String, ctx: RequestContext) -> MessageHandler {
-    let log = ctx
-      .log()
-      .new(slog::o!("connection" => format!("{}", connection_id), "service" => "message_handler", "channel" => channel_id.clone()));
+    let o = slog::o!("connection" => format!("{}", connection_id), "service" => "message_handler", "channel" => channel_id.clone());
+    let log = ctx.log().new(o);
     MessageHandler {
       connection_id,
       channel_id,
@@ -55,7 +54,7 @@ impl MessageHandler {
         MemberRole::Participant
       };
       let member = svc.update_member(&self.channel_id, *self.ctx.user_id(), self.ctx.user_profile().name().clone(), role)?;
-      self.send_to_channel_except_self(ResponseMessage::MemberUpdate { member })?;
+      self.send_to_channel_except_self(ResponseMessage::UpdateMember { member })?;
 
       ResponseMessage::SessionJoined {
         session: Box::new(svc.read_session(&self.channel_id)?),
@@ -75,8 +74,9 @@ impl MessageHandler {
   pub fn on_message(&self, msg: RequestMessage) -> Result<()> {
     match msg {
       RequestMessage::Ping { v } => self.send_to_self(ResponseMessage::Pong { v }),
-      RequestMessage::UpdateSelf { name } => self.on_update_self(name),
       RequestMessage::UpdatePoll { id, title } => self.on_update_poll(id, title),
+      RequestMessage::UpdateSelf { name } => self.on_update_self(name),
+      RequestMessage::UpdateSession { name, choices } => self.on_update_session(name, choices),
       msg => {
         slog::warn!(self.log, "Unhandled RequestMessage [{:?}]", msg);
         Ok(())
@@ -84,10 +84,18 @@ impl MessageHandler {
     }
   }
 
+  fn on_update_poll(&self, id: Uuid, title: String) -> Result<()> {
+    let svc = self.ctx().app().session_svc();
+    let poll = svc.update_poll(self.channel_id(), id, title.clone(), *self.ctx().user_id())?;
+    self.send_to_channel(ResponseMessage::UpdatePoll { poll })?;
+    slog::info!(self.log(), "Updated poll [{}: {}] for session [{}]", id, title, self.channel_id());
+    Ok(())
+  }
+
   fn on_update_self(&self, name: String) -> Result<()> {
     let svc = self.ctx().app().session_svc();
     let member = svc.update_member_name(self.channel_id(), *self.ctx().user_id(), name.clone())?;
-    self.send_to_channel(ResponseMessage::MemberUpdate { member })?;
+    self.send_to_channel(ResponseMessage::UpdateMember { member })?;
     slog::info!(
       self.log(),
       "Updated member [{}: {}] for session [{}]",
@@ -98,11 +106,14 @@ impl MessageHandler {
     Ok(())
   }
 
-  fn on_update_poll(&self, id: Uuid, title: String) -> Result<()> {
+  fn on_update_session(&self, title: String, choices: Vec<String>) -> Result<()> {
     let svc = self.ctx().app().session_svc();
-    let poll = svc.update_poll(self.channel_id(), id, title.clone(), *self.ctx().user_id())?;
-    self.send_to_channel(ResponseMessage::PollUpdate { poll })?;
-    slog::info!(self.log(), "Updated poll [{}: {}] for session [{}]", id, title, self.channel_id());
+    let mut session = svc.read_session(self.channel_id())?;
+    slog::info!(self.log(), "Updating session [{}: {:?}] for session [{}]", &title, &choices, self.channel_id());
+    session.set_title(title);
+    session.set_choices(choices);
+    let _ = svc.write_session(&session)?;
+    self.send_to_channel(ResponseMessage::UpdateSession { session })?;
     Ok(())
   }
 

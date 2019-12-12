@@ -26,6 +26,7 @@ mod event_handler;
 mod html;
 mod js;
 mod message_handler;
+mod session_ctx;
 pub(crate) mod socket {
   pub(crate) mod ws;
   pub(crate) mod ws_events;

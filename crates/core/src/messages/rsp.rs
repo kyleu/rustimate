@@ -39,20 +39,20 @@ pub enum ResponseMessage {
     polls: Vec<Poll>,
     votes: Vec<Vote>
   },
-  SessionUpdate {
+  UpdateSession {
     session: EstimateSession
   },
-  MemberStatusUpdate {
+  UpdateStatus {
     user_id: Uuid,
     connected: bool
   },
-  MemberUpdate {
+  UpdateMember {
     member: Member
   },
-  PollUpdate {
+  UpdatePoll {
     poll: Poll
   },
-  VoteUpdate {
+  UpdateVote {
     vote: Vote
   }
 }

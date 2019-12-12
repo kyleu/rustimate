@@ -32,7 +32,6 @@ pub mod messages {
 pub mod poll;
 pub mod profile;
 pub mod session;
-pub mod session_ctx;
 pub mod util;
 
 #[doc(inline)]

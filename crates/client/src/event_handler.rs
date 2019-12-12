@@ -11,28 +11,19 @@ pub(crate) struct EventHandler {}
 impl EventHandler {
   pub(crate) fn handle(ctx: &ClientContext, t: &str, k: &str, v: &str) -> Result<()> {
     match t {
-      "send-ping" => ctx.send(RequestMessage::Ping {
-        v: js_sys::Date::now() as i64
-      }),
-      "update-poll" => on_update_poll(ctx, v),
+      "update-profile" => on_update_profile(ctx, v),
+      "update-session" => on_update_session(ctx, v),
       "member-detail" => on_member_detail(ctx, Uuid::parse_str(k).unwrap()),
       "poll-detail" => on_poll_detail(ctx, Uuid::parse_str(k).unwrap()),
+      "profile-detail" => on_profile_detail(ctx),
+      "send-ping" => ctx.send(RequestMessage::Ping { v: js_sys::Date::now() as i64 }),
+      "session-detail" => on_session_detail(ctx),
+      "update-poll" => on_update_poll(ctx, v),
       _ => {
         warn!("Unhandled event [{}] with [k:{}], [v:{}]", t, k, v);
         Ok(())
       }
     }
-  }
-}
-
-fn on_update_poll(ctx: &ClientContext, v: &str) -> Result<()> {
-  if v.is_empty() {
-    crate::logging::notify(NotificationLevel::Warn, "Enter a question next time")
-  } else {
-    ctx.send(RequestMessage::UpdatePoll {
-      id: Uuid::new_v4(),
-      title: v.into()
-    })
   }
 }
 
@@ -56,4 +47,57 @@ fn on_poll_detail(ctx: &ClientContext, id: Uuid) -> Result<()> {
   }
   crate::js::show_modal("poll-detail-modal");
   Ok(())
+}
+
+fn on_profile_detail(ctx: &ClientContext) -> Result<()> {
+  let input: web_sys::HtmlInputElement = ctx.get_element_by_id_as("profile-detail-modal-input")?;
+  input.set_value(ctx.user_profile().name());
+  crate::js::show_modal("profile-detail-modal");
+  Ok(())
+}
+
+fn on_session_detail(ctx: &ClientContext) -> Result<()> {
+  if let Some(sc) = ctx.session_ctx() {
+    let input: web_sys::HtmlInputElement = ctx.get_element_by_id_as("session-detail-modal-input")?;
+    input.set_value(sc.session().title());
+  }
+  crate::js::show_modal("session-detail-modal");
+  Ok(())
+}
+
+fn on_update_profile(ctx: &ClientContext, name: &str) -> Result<()> {
+  if name.is_empty() {
+    crate::logging::notify(NotificationLevel::Warn, "Enter a name next time")
+  } else {
+    ctx.send(RequestMessage::UpdateSelf {
+      name: name.into()
+    })
+  }
+}
+
+fn on_update_session(ctx: &ClientContext, name: &str) -> Result<()> {
+  if name.is_empty() {
+    crate::logging::notify(NotificationLevel::Warn, "Enter a session name next time")
+  } else {
+    if let Some(sc) = ctx.session_ctx() {
+      let choices: Vec<String> = sc.session().choices().iter().cloned().collect();
+      ctx.send(RequestMessage::UpdateSession {
+        name: name.into(),
+        choices
+      })
+    } else {
+      Ok(())
+    }
+  }
+}
+
+fn on_update_poll(ctx: &ClientContext, v: &str) -> Result<()> {
+  if v.is_empty() {
+    crate::logging::notify(NotificationLevel::Warn, "Enter a question next time")
+  } else {
+    ctx.send(RequestMessage::UpdatePoll {
+      id: Uuid::new_v4(),
+      title: v.into()
+    })
+  }
 }
