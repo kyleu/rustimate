@@ -3,8 +3,6 @@ use crate::session_ctx::SessionContext;
 
 use anyhow::Result;
 use maud::html;
-use rustimate_core::member::Member;
-use rustimate_core::poll::Poll;
 use rustimate_core::profile::UserProfile;
 use rustimate_core::session::EstimateSession;
 use rustimate_core::ResponseMessage;
@@ -36,8 +34,8 @@ impl MessageHandler {
       } => on_session_joined(ctx, SessionContext::new(*session, members, connected, polls, votes)),
 
       ResponseMessage::UpdateSession { session } => on_update_session(ctx, session),
-      ResponseMessage::UpdatePoll { poll } => on_update_poll(ctx, poll),
-      ResponseMessage::UpdateMember { member } => on_update_member(ctx, member),
+      ResponseMessage::UpdatePoll { poll } => crate::polls::on_update_poll(ctx, poll),
+      ResponseMessage::UpdateMember { member } => crate::members::on_update_member(ctx, member),
 
       _ => {
         warn!("Unhandled ResponseMessage [{:?}]", msg);
@@ -68,36 +66,28 @@ fn on_pong(ctx: &RwLock<ClientContext>, v: i64) -> Result<()> {
 
 fn on_session_joined(ctx: &RwLock<ClientContext>, session: SessionContext) -> Result<()> {
   info!("Session details received for [{}]", session.session().key());
-
-  let mut svc = ctx.write().unwrap();
-
-  let mut members: Vec<&Member> = session.members().iter().map(|x| x.1).collect();
-  members.sort_by(|x, y| x.name().partial_cmp(&y.name()).unwrap());
-  svc.replace_template(
-    "member-listing",
-    crate::templates::member::members(&svc, members, session.connected())
-  )?;
-
-  let mut polls: Vec<&Poll> = session.polls().iter().map(|x| x.1).collect();
-  polls.sort_by(|x, y| x.idx().partial_cmp(&y.idx()).unwrap());
-  svc.replace_template(
-    "poll-listing",
-    crate::templates::poll::polls(&svc, polls)
-  )?;
-
-  svc.on_session_joined(session);
-
-  Ok(())
-}
-
-fn on_update_member(ctx: &RwLock<ClientContext>, member: Member) -> Result<()> {
-  Ok(())
-}
-
-fn on_update_poll(ctx: &RwLock<ClientContext>, poll: Poll) -> Result<()> {
+  {
+    let svc = ctx.read().unwrap();
+    crate::members::render_members(&svc, &session.members(), session.connected())?;
+    crate::polls::render_polls(&svc, &session.polls())?;
+  }
+  {
+    let mut svc = ctx.write().unwrap();
+    svc.on_session_joined(session);
+  }
   Ok(())
 }
 
 fn on_update_session(ctx: &RwLock<ClientContext>, session: EstimateSession) -> Result<()> {
+  {
+    let svc = ctx.read().unwrap();
+    svc.replace_template("session-name-label", html!((session.title())))?;
+  }
+  {
+    let mut svc = ctx.write().unwrap();
+    if let Some(ref mut x) = svc.session_ctx_mut() {
+      x.set_session(session);
+    }
+  }
   Ok(())
 }

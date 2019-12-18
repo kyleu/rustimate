@@ -60,12 +60,16 @@ impl ClientContext {
     &self.connection_id
   }
 
-  pub(crate) fn _user_id(&self) -> &Option<Uuid> {
+  pub(crate) fn user_id(&self) -> &Option<Uuid> {
     &self.user_id
   }
 
   pub(crate) fn session_ctx(&self) -> &Option<SessionContext> {
     &self.session_ctx
+  }
+
+  pub(crate) fn session_ctx_mut(&mut self) -> &mut Option<SessionContext> {
+    &mut self.session_ctx
   }
 
   pub(crate) fn user_profile(&self) -> &UserProfile {

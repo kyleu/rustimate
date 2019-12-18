@@ -38,8 +38,16 @@ impl SessionContext {
     &self.session
   }
 
+  pub(crate) fn set_session(&mut self, s: EstimateSession) {
+    self.session = s
+  }
+
   pub(crate) fn members(&self) -> &HashMap<Uuid, Member> {
     &self.members
+  }
+
+  pub(crate) fn set_member(&mut self, m: Member) {
+    let _ = self.members.insert(m.user_id().clone(), m);
   }
 
   pub(crate) fn connected(&self) -> &HashSet<Uuid> {
@@ -48,6 +56,10 @@ impl SessionContext {
 
   pub(crate) fn polls(&self) -> &HashMap<Uuid, Poll> {
     &self.polls
+  }
+
+  pub(crate) fn set_poll(&mut self, p: Poll) {
+    let _ = self.polls.insert(p.id().clone(), p);
   }
 
   pub(crate) fn _votes(&self) -> &HashMap<(Uuid, Uuid), Vote> {

@@ -50,16 +50,14 @@ fn on_poll_detail(ctx: &ClientContext, id: Uuid) -> Result<()> {
 }
 
 fn on_profile_detail(ctx: &ClientContext) -> Result<()> {
-  let input: web_sys::HtmlInputElement = ctx.get_element_by_id_as("profile-detail-modal-input")?;
-  input.set_value(ctx.user_profile().name());
+  ctx.set_input_value("profile-detail-modal-input", ctx.user_profile().name())?;
   crate::js::show_modal("profile-detail-modal");
   Ok(())
 }
 
 fn on_session_detail(ctx: &ClientContext) -> Result<()> {
   if let Some(sc) = ctx.session_ctx() {
-    let input: web_sys::HtmlInputElement = ctx.get_element_by_id_as("session-detail-modal-input")?;
-    input.set_value(sc.session().title());
+    ctx.set_input_value("session-detail-modal-input", sc.session().title())?;
   }
   crate::js::show_modal("session-detail-modal");
   Ok(())

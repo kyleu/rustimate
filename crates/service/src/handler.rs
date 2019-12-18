@@ -38,37 +38,37 @@ impl MessageHandler {
     &self.ctx
   }
 
-  pub fn on_open(&self) -> Result<Vec<ResponseMessage>> {
-    let connected = ResponseMessage::Connected {
+  pub fn on_open(&self) -> Result<()> {
+    self.send_to_self(ResponseMessage::Connected {
       connection_id: *self.connection_id(),
       user_id: *self.ctx().user_id(),
       u: Box::new((*self.ctx.user_profile()).clone()),
       b: !self.ctx.app().verbose()
-    };
-    let join_session = {
-      let svc = self.ctx.app().session_svc();
+    })?;
 
-      let role = if svc.read_members(&self.channel_id)?.is_empty() {
-        MemberRole::Creator
-      } else {
-        MemberRole::Participant
-      };
-      let member = svc.update_member(&self.channel_id, *self.ctx.user_id(), self.ctx.user_profile().name().clone(), role)?;
-      self.send_to_channel_except_self(ResponseMessage::UpdateMember { member })?;
+    let svc = self.ctx.app().session_svc();
 
-      ResponseMessage::SessionJoined {
-        session: Box::new(svc.read_session(&self.channel_id)?),
-        members: svc.read_members(&self.channel_id)?,
-        connected: vec![],
-        polls: svc.read_polls(&self.channel_id)?,
-        votes: svc.read_votes(&self.channel_id)?
-      }
+    let role = if svc.read_members(&self.channel_id)?.is_empty() {
+      MemberRole::Creator
+    } else {
+      MemberRole::Participant
     };
-    Ok(vec![connected, join_session])
+    let member = svc.update_member(&self.channel_id, *self.ctx.user_id(), self.ctx.user_profile().name().clone(), role)?;
+    self.send_to_channel_except_self(ResponseMessage::UpdateMember { member })?;
+
+    self.send_to_self(ResponseMessage::SessionJoined {
+      session: Box::new(svc.read_session(&self.channel_id)?),
+      members: svc.read_members(&self.channel_id)?,
+      connected: vec![],
+      polls: svc.read_polls(&self.channel_id)?,
+      votes: svc.read_votes(&self.channel_id)?
+    })?;
+
+    Ok(())
   }
 
-  pub fn on_closed(&self) -> Vec<ResponseMessage> {
-    Vec::new()
+  pub fn on_closed(&self) -> Result<()> {
+    Ok(())
   }
 
   pub fn on_message(&self, msg: RequestMessage) -> Result<()> {

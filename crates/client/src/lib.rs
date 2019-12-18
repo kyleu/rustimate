@@ -25,7 +25,9 @@ mod ctx;
 mod event_handler;
 mod html;
 mod js;
+mod members;
 mod message_handler;
+mod polls;
 mod session_ctx;
 pub(crate) mod socket {
   pub(crate) mod ws;

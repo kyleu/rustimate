@@ -11,7 +11,7 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
       div.uk-margin-top.uk-grid-small uk-grid? {
         div."uk-width-1-3" {
           (crate::card(&ctx, html! {
-            h3.left style="margin: 0;" { (ctx.user_profile().name()) }
+            h3.left.nomargin#profile-name-label { (ctx.user_profile().name()) }
             div.right {
               a.(ctx.user_profile().link_class()) href="" onclick=(onclick_event("profile-detail", "", "")) title="Change Name" {
                 span data-uk-icon="icon: cog" {}
@@ -21,7 +21,7 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
         }
         div."uk-width-2-3" {
           (crate::card(&ctx, html! {
-            h3.left style="margin: 0;" { (es.title()) }
+            h3.left.nomargin#session-name-label { (es.title()) }
             div.right {
               a.(ctx.user_profile().link_class()) href="" onclick=(onclick_event("session-detail", "", "")) title="Edit Title" {
                 span data-uk-icon="icon: cog" {}

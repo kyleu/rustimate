@@ -16,6 +16,7 @@ impl ClientSocket {
     let url = calc_url(curr_url);
     let ws = WebSocket::new(&url).map_err(|e| anyhow::anyhow!(format!("Error creating WebSocket: {:?}", e)))?;
     ws.set_binary_type(web_sys::BinaryType::Arraybuffer);
+    crate::js::wire_onbeforeunload(&ws);
     Ok(ClientSocket { url, binary, ws })
   }
 

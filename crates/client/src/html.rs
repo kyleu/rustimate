@@ -40,6 +40,11 @@ impl crate::ctx::ClientContext {
     parent.set_inner_html(&template.into_string());
     Ok(())
   }
+
+  pub(crate) fn set_input_value(&self, id: &str, v: &str) -> Result<()> {
+    self.get_element_by_id_as::<web_sys::HtmlInputElement>(id)?.set_value(v);
+    Ok(())
+  }
 }
 
 pub(crate) fn onclick_event(t: &str, k: &str, v: &str) -> String {

@@ -23,6 +23,10 @@ extern "C" {
   #[allow(unsafe_code)]
   #[wasm_bindgen(js_namespace = rustimate)]
   pub(crate) fn wire_textarea(id: &str);
+
+  #[allow(unsafe_code)]
+  #[wasm_bindgen(js_namespace = rustimate)]
+  pub(crate) fn wire_onbeforeunload(socket: &web_sys::WebSocket);
 }
 
 #[wasm_bindgen]

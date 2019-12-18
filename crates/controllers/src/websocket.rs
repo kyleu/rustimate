@@ -64,22 +64,17 @@ impl Actor for ServerSocket {
       let connections = self.handler.ctx().app().connections();
       connections.add::<ServerSender>(self.handler.channel_id(), *self.handler().connection_id(), sender);
     }
-    let msgs = match self.handler.on_open() {
-      Ok(m) => m,
-      Err(e) => {
-        slog::error!(self.handler.log(), "Unable to process on_open: {}", e);
-        vec![]
-      }
+    match self.handler.on_open() {
+      Ok(_) => (),
+      Err(e) => slog::error!(self.handler.log(), "Unable to process on_open: {}", e)
     };
-    for msg in msgs {
-      match self.send_ws(&msg, wsc) {
-        Ok(_) => (),
-        Err(e) => slog::warn!(self.handler.log(), "Unable to send initial open messages: {}", e)
-      }
-    }
   }
 
   fn stopping(&mut self, _ctx: &mut Self::Context) -> actix::Running {
+    match self.handler.on_closed() {
+      Ok(_) => (),
+      Err(e) => slog::error!(self.handler.log(), "Unable to process on_closed: {}", e)
+    };
     let connections = self.handler.ctx().app().connections();
     connections.remove(self.handler.channel_id(), *self.handler().connection_id());
     actix::Running::Stop

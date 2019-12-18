@@ -31,10 +31,17 @@ function wire_textarea(id) {
   el.oninput();
 };
 
+function wire_onbeforeunload(socket) {
+  window.addEventListener('beforeunload', (e) => {
+    socket.close();
+  });
+}
+
 window.rustimate = {
   activate_tab: activate_tab,
   notify: notify,
   on_event: on_event,
   show_modal: show_modal,
+  wire_onbeforeunload: wire_onbeforeunload,
   wire_textarea: wire_textarea
 };
