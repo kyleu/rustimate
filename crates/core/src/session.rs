@@ -19,8 +19,8 @@ pub struct EstimateSession {
 }
 
 impl EstimateSession {
-  pub fn new(title: String) -> EstimateSession {
-    EstimateSession {
+  pub fn new(title: String) -> Self {
+    Self {
       key: slug_for(&title),
       title,
       choices: default_choices(),
@@ -29,11 +29,11 @@ impl EstimateSession {
     }
   }
 
-  pub fn key(&self) -> &String {
+  pub const fn key(&self) -> &String {
     &self.key
   }
 
-  pub fn title(&self) -> &String {
+  pub const fn title(&self) -> &String {
     &self.title
   }
 
@@ -41,7 +41,7 @@ impl EstimateSession {
     self.title = title;
   }
 
-  pub fn choices(&self) -> &Vec<String> {
+  pub const fn choices(&self) -> &Vec<String> {
     &self.choices
   }
 

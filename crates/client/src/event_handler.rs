@@ -13,10 +13,12 @@ impl EventHandler {
     match t {
       "update-profile" => on_update_profile(ctx, v),
       "update-session" => on_update_session(ctx, v),
-      "member-detail" => on_member_detail(ctx, Uuid::parse_str(k).unwrap()),
-      "poll-detail" => on_poll_detail(ctx, Uuid::parse_str(k).unwrap()),
+      "member-detail" => on_member_detail(ctx, Uuid::parse_str(k).expect("Invalid UUID")),
+      "poll-detail" => on_poll_detail(ctx, Uuid::parse_str(k).expect("Invalid UUID")),
       "profile-detail" => on_profile_detail(ctx),
-      "send-ping" => ctx.send(RequestMessage::Ping { v: js_sys::Date::now() as i64 }),
+      "send-ping" => ctx.send(&RequestMessage::Ping {
+        v: js_sys::Date::now() as i64
+      }),
       "session-detail" => on_session_detail(ctx),
       "update-poll" => on_update_poll(ctx, v),
       _ => {
@@ -65,35 +67,31 @@ fn on_session_detail(ctx: &ClientContext) -> Result<()> {
 
 fn on_update_profile(ctx: &ClientContext, name: &str) -> Result<()> {
   if name.is_empty() {
-    crate::logging::notify(NotificationLevel::Warn, "Enter a name next time")
+    crate::logging::notify(&NotificationLevel::Warn, "Enter a name next time")
   } else {
-    ctx.send(RequestMessage::UpdateSelf {
-      name: name.into()
-    })
+    ctx.send(&RequestMessage::UpdateSelf { name: name.into() })
   }
 }
 
 fn on_update_session(ctx: &ClientContext, name: &str) -> Result<()> {
   if name.is_empty() {
-    crate::logging::notify(NotificationLevel::Warn, "Enter a session name next time")
+    crate::logging::notify(&NotificationLevel::Warn, "Enter a session name next time")
+  } else if let Some(sc) = ctx.session_ctx() {
+    let choices: Vec<String> = sc.session().choices().to_vec();
+    ctx.send(&RequestMessage::UpdateSession {
+      name: name.into(),
+      choices
+    })
   } else {
-    if let Some(sc) = ctx.session_ctx() {
-      let choices: Vec<String> = sc.session().choices().iter().cloned().collect();
-      ctx.send(RequestMessage::UpdateSession {
-        name: name.into(),
-        choices
-      })
-    } else {
-      Ok(())
-    }
+    Ok(())
   }
 }
 
 fn on_update_poll(ctx: &ClientContext, v: &str) -> Result<()> {
   if v.is_empty() {
-    crate::logging::notify(NotificationLevel::Warn, "Enter a question next time")
+    crate::logging::notify(&NotificationLevel::Warn, "Enter a question next time")
   } else {
-    ctx.send(RequestMessage::UpdatePoll {
+    ctx.send(&RequestMessage::UpdatePoll {
       id: Uuid::new_v4(),
       title: v.into()
     })

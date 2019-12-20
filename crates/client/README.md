@@ -1,3 +1,3 @@
 # rustimate-client
 
-wasm client for rustimate
+WASM web client sources for rustimate

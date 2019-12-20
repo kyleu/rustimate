@@ -1,3 +1,4 @@
+use rustimate_core::profile::Theme;
 use serde::Deserialize;
 
 /// Transport class for editing your profile
@@ -10,22 +11,22 @@ pub struct ProfileForm {
 }
 
 impl ProfileForm {
-  pub fn username(&self) -> &String {
+  pub const fn username(&self) -> &String {
     &self.username
   }
 
-  pub fn theme(&self) -> rustimate_core::profile::Theme {
-    match self.theme.parse::<rustimate_core::profile::Theme>() {
+  pub fn theme(&self) -> Theme {
+    match self.theme.parse::<Theme>() {
       Ok(t) => t,
-      Err(_) => rustimate_core::profile::Theme::Light
+      Err(_) => Theme::Light
     }
   }
 
-  pub fn navbar_color(&self) -> &String {
+  pub const fn navbar_color(&self) -> &String {
     &self.navbar_color
   }
 
-  pub fn link_color(&self) -> &String {
+  pub const fn link_color(&self) -> &String {
     &self.link_color
   }
 }

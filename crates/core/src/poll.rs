@@ -20,8 +20,8 @@ pub struct Poll {
 }
 
 impl Poll {
-  pub fn new(id: Uuid, session_key: String, idx: u32, author_id: Uuid, title: String) -> Poll {
-    Poll {
+  pub const fn new(id: Uuid, session_key: String, idx: u32, author_id: Uuid, title: String) -> Self {
+    Self {
       id,
       session_key,
       idx,
@@ -32,15 +32,15 @@ impl Poll {
     }
   }
 
-  pub fn id(&self) -> &Uuid {
+  pub const fn id(&self) -> &Uuid {
     &self.id
   }
 
-  pub fn title(&self) -> &String {
+  pub const fn title(&self) -> &String {
     &self.title
   }
 
-  pub fn idx(&self) -> u32 {
+  pub const fn idx(&self) -> u32 {
     self.idx
   }
 
@@ -75,11 +75,11 @@ pub struct Vote {
 }
 
 impl Vote {
-  pub fn poll_id(&self) -> &Uuid {
+  pub const fn poll_id(&self) -> &Uuid {
     &self.poll_id
   }
 
-  pub fn user_id(&self) -> &Uuid {
+  pub const fn user_id(&self) -> &Uuid {
     &self.user_id
   }
 }

@@ -7,7 +7,7 @@ use rustimate_controllers::routes::add_routes;
 use rustimate_service::AppConfig;
 use std::time::SystemTime;
 
-pub(crate) fn start_server(cfg: AppConfig, port_tx: std::sync::mpsc::Sender<u16>) -> Result<()> {
+pub(crate) fn start_server(cfg: &AppConfig, port_tx: &std::sync::mpsc::Sender<u16>) -> Result<()> {
   let server = {
     let cfg = cfg.clone();
     HttpServer::new(move || {
@@ -23,10 +23,11 @@ pub(crate) fn start_server(cfg: AppConfig, port_tx: std::sync::mpsc::Sender<u16>
         .wrap_fn(|req, srv| {
           let p = req.path().to_owned();
           let start_time = SystemTime::now();
-          let cfg: AppConfig = match req.app_data::<AppConfig>() {
-            Some(ad) => ad.get_ref().to_owned(),
-            None => panic!("Missing AppConfig data reference!")
-          };
+          let cfg: AppConfig = req
+            .app_data::<AppConfig>()
+            .expect("Missing AppConfig data reference!")
+            .get_ref()
+            .to_owned();
           let useful = !p.starts_with("/static");
           if useful {
             slog::trace!(cfg.root_logger(), "Request received for path [{}]", p);

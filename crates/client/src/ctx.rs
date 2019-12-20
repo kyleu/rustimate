@@ -21,7 +21,7 @@ pub(crate) struct ClientContext {
 }
 
 impl ClientContext {
-  pub(crate) fn new() -> Result<Rc<RwLock<ClientContext>>> {
+  pub(crate) fn new() -> Result<Rc<RwLock<Self>>> {
     let binary = true;
     let window = web_sys::window().ok_or_else(|| anyhow::anyhow!("Can't find [window]"))?;
     let document = window.document().ok_or_else(|| anyhow::anyhow!("Can't find [document]"))?;
@@ -30,7 +30,7 @@ impl ClientContext {
     let socket = ClientSocket::new(&url, binary)?;
     let user_profile = UserProfile::default();
 
-    let rc = Rc::new(RwLock::new(ClientContext {
+    let rc = Rc::new(RwLock::new(Self {
       window,
       document,
       socket,
@@ -40,31 +40,31 @@ impl ClientContext {
       user_profile
     }));
 
-    crate::socket::ws_events::wire_socket(Rc::clone(&rc));
-    crate::socket::ws_events::on_load(&Rc::clone(&rc).read().unwrap())?;
+    crate::socket::ws_events::wire_socket(&Rc::clone(&rc));
+    crate::socket::ws_events::on_load(&Rc::clone(&rc).read().expect("Cannot lock ClientContext for read"))?;
 
     debug!("[{}] has started", rustimate_core::APPNAME);
 
     Ok(rc)
   }
 
-  pub(crate) fn document(&self) -> &Document {
+  pub(crate) const fn document(&self) -> &Document {
     &self.document
   }
 
-  pub(crate) fn socket(&self) -> &ClientSocket {
+  pub(crate) const fn socket(&self) -> &ClientSocket {
     &self.socket
   }
 
-  pub(crate) fn _connection_id(&self) -> &Option<Uuid> {
+  pub(crate) const fn _connection_id(&self) -> &Option<Uuid> {
     &self.connection_id
   }
 
-  pub(crate) fn user_id(&self) -> &Option<Uuid> {
+  pub(crate) const fn user_id(&self) -> &Option<Uuid> {
     &self.user_id
   }
 
-  pub(crate) fn session_ctx(&self) -> &Option<SessionContext> {
+  pub(crate) const fn session_ctx(&self) -> &Option<SessionContext> {
     &self.session_ctx
   }
 
@@ -72,11 +72,12 @@ impl ClientContext {
     &mut self.session_ctx
   }
 
-  pub(crate) fn user_profile(&self) -> &UserProfile {
+  pub(crate) const fn user_profile(&self) -> &UserProfile {
     &self.user_profile
   }
 
   pub(crate) fn on_open(&self) -> Result<()> {
+    debug!("Open success for [{}]", self.user_profile().name());
     Ok(())
   }
 
@@ -91,7 +92,7 @@ impl ClientContext {
     self.session_ctx = Some(s);
   }
 
-  pub(crate) fn send(&self, rm: RequestMessage) -> Result<()> {
+  pub(crate) fn send(&self, rm: &RequestMessage) -> Result<()> {
     self.socket.send(rm);
     Ok(())
   }
@@ -101,10 +102,12 @@ impl ClientContext {
   }
 
   pub(crate) fn on_error(&self) -> Result<()> {
+    warn!("Error for [{}]", self.user_profile().name());
     Ok(())
   }
 
   pub(crate) fn on_close(&self) -> Result<()> {
+    debug!("Close for [{}]", self.user_profile().name());
     Ok(())
   }
 }

@@ -34,7 +34,7 @@ pub fn req_context(session: &Session, cfg: &Data<AppConfig>, action_key: &'stati
     }
   };
   let _ = flash.clone().map(|_| session.remove(FLASH_KEY));
-  RequestContext::new(app_cfg, user_id, user_profile, logger, flash)
+  RequestContext::new(app_cfg, user_id, user_profile, &logger, flash)
 }
 
 /// Set a session entry for flash messages. Allowed keys are "success", "warning", and "error". Values are used once, then unset.

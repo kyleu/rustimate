@@ -10,13 +10,18 @@ use uuid::Uuid;
 
 /// Available at `/admin`
 pub fn list(session: Session, cfg: Data<AppConfig>, req: HttpRequest) -> HttpResponse {
-  crate::act(&session, &cfg, req, |ctx, router| rustimate_templates::admin::list(&ctx, router))
+  crate::act(&session, &cfg, req, |ctx, router| rustimate_templates::admin::list(ctx, router))
 }
 
 /// Available at `/admin/conn`
 pub fn connections(session: Session, cfg: Data<AppConfig>, req: HttpRequest) -> HttpResponse {
   crate::act(&session, &cfg, req, |ctx, router| {
-    rustimate_templates::connections::connections(&ctx, router, ctx.app().connections().conn_list(), ctx.app().connections().channel_list())
+    rustimate_templates::connections::connections(
+      ctx,
+      router,
+      &ctx.app().connections().conn_list(),
+      &ctx.app().connections().channel_list()
+    )
   })
 }
 
@@ -29,7 +34,7 @@ pub struct SendForm {
 /// Available at `/admin/conn/{id}`
 pub fn connection_detail(session: Session, cfg: Data<AppConfig>, id: Path<Uuid>, req: HttpRequest) -> HttpResponse {
   crate::act(&session, &cfg, req, |ctx, router| {
-    rustimate_templates::connections::connection_detail(&ctx, router, *id)
+    rustimate_templates::connections::connection_detail(ctx, router, *id)
   })
 }
 
@@ -56,7 +61,7 @@ pub fn connection_send(session: Session, cfg: Data<AppConfig>, id: Path<Uuid>, r
 /// Available at `/admin/channel/{id}`
 pub fn channel_detail(session: Session, cfg: Data<AppConfig>, key: Path<String>, req: HttpRequest) -> HttpResponse {
   crate::act(&session, &cfg, req, |ctx, router| {
-    rustimate_templates::connections::channel_detail(&ctx, router, &key)
+    rustimate_templates::connections::channel_detail(ctx, router, &key)
   })
 }
 
@@ -74,7 +79,7 @@ pub fn channel_send(session: Session, cfg: Data<AppConfig>, key: Path<String>, r
       &f.content,
       &key
     );
-    ctx.app().connections().send_channel(&key, msg);
+    ctx.app().connections().send_channel(&key, &msg);
     add_flash(&session, ctx.log(), "success", &format!("Sent message to channel [{}]", &key));
     router.route_simple("admin.connections")
   })
@@ -83,13 +88,13 @@ pub fn channel_send(session: Session, cfg: Data<AppConfig>, key: Path<String>, r
 /// Available at `/admin/settings`
 pub fn settings(session: Session, cfg: Data<AppConfig>, req: HttpRequest) -> HttpResponse {
   crate::act(&session, &cfg, req, |ctx, router| {
-    rustimate_templates::settings::settings(&ctx, router)
+    rustimate_templates::settings::settings(ctx, router)
   })
 }
 
 /// Available by posting to `/admin/settings`
 pub fn settings_post(session: Session, cfg: Data<AppConfig>, req: HttpRequest) -> HttpResponse {
   crate::act(&session, &cfg, req, |ctx, router| {
-    rustimate_templates::settings::settings(&ctx, router)
+    rustimate_templates::settings::settings(ctx, router)
   })
 }

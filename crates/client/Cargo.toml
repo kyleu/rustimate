@@ -6,6 +6,7 @@ edition = "2018"
 description = "WASM web client sources for rustimate"
 readme = "README.md"
 categories = ["wasm", "web-programming", "web-programming::websocket"]
+keywords = ["wasm"]
 homepage = "https://estimate.poker"
 repository = "https://github.com/kyleu/rustimate"
 license = "MIT"
@@ -20,12 +21,12 @@ rustimate-core = { version = "0.0.1", path = "../core" }
 anyhow = "1.0.25"
 console_error_panic_hook = "0.1.6"
 instant = "0.1.2"
-js-sys = "0.3.32"
+js-sys = "0.3.33"
 maud = "0.21.0"
 uuid = { version = "0.8.1", features = ["serde", "v4", "wasm-bindgen"] }
-wasm-bindgen = { version = "0.2.55", features = ["nightly"] }
-wasm-bindgen-futures = "0.4.5"
-web-sys = { version = "0.3.32", features = [
+wasm-bindgen = { version = "0.2.56", features = ["nightly"] }
+wasm-bindgen-futures = "0.4.6"
+web-sys = { version = "0.3.33", features = [
   "BinaryType",
   "Blob",
   "console",
@@ -54,4 +55,4 @@ web-sys = { version = "0.3.32", features = [
 ] }
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3.5"
+wasm-bindgen-test = "0.3.6"

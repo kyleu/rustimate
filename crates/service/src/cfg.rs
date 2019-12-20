@@ -18,29 +18,29 @@ pub struct AppConfig {
 }
 
 impl AppConfig {
-  pub fn new(task: String, address: String, port: u16, cfg_dir: String, root_logger: slog::Logger, verbose: bool) -> AppConfig {
-    let files = FileService::new(&cfg_dir, &root_logger);
-    AppConfig {
+  pub fn new(task: String, address: String, port: u16, cfg_dir: &str, root_logger: slog::Logger, verbose: bool) -> Self {
+    let files = FileService::new(cfg_dir, &root_logger);
+    Self {
       task,
       address,
       port,
       files: Arc::new(files.clone()),
       connections: Arc::new(ConnectionCache::new(&root_logger)),
-      session_svc: Arc::new(SessionService::new(files, root_logger.clone())),
+      session_svc: Arc::new(SessionService::new(files, &root_logger)),
       root_logger,
       verbose
     }
   }
 
-  pub fn task(&self) -> &String {
+  pub const fn task(&self) -> &String {
     &self.task
   }
 
-  pub fn address(&self) -> &String {
+  pub const fn address(&self) -> &String {
     &self.address
   }
 
-  pub fn port(&self) -> u16 {
+  pub const fn port(&self) -> u16 {
     self.port
   }
 
@@ -60,7 +60,7 @@ impl AppConfig {
     &self.root_logger
   }
 
-  pub fn verbose(&self) -> bool {
+  pub const fn verbose(&self) -> bool {
     self.verbose
   }
 }

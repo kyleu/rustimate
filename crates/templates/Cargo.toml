@@ -4,7 +4,9 @@ version = "0.0.1"
 authors = ["Kyle U <kyle@kyleu.com>"]
 edition = "2018"
 description = "HTML templates used by the rustimate server"
-keywords = ["test", "noop", "pointless"]
+readme = "README.md"
+categories = ["development-tools"]
+keywords = ["templates"]
 homepage = "https://estimate.poker"
 repository = "https://github.com/kyleu/rustimate"
 license = "MIT"
@@ -16,5 +18,5 @@ rustimate-service = { version = "0.0.1", path = "../service" }
 anyhow = "1.0.25"
 maud = "0.21.0"
 num_cpus = "1.11.1"
-serde = { version = "1.0.103", features = ["derive"] }
+serde = { version = "1.0.104", features = ["derive"] }
 uuid = { version = "0.8.1", features = ["serde", "v4", "wasm-bindgen"] }

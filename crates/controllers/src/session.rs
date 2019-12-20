@@ -14,7 +14,7 @@ pub(crate) fn create(session: Session, cfg: web::Data<AppConfig>, req: HttpReque
   crate::redir(&session, &cfg, req, |_ctx, router| {
     let es = EstimateSession::new(key.key.clone());
     cfg.session_svc().write_session(&es)?;
-    router.route("session.join", &[&es.key()])
+    router.route("session.join", &[es.key()])
   })
 }
 
@@ -22,7 +22,7 @@ pub(crate) fn create(session: Session, cfg: web::Data<AppConfig>, req: HttpReque
 pub(crate) fn join_link(session: Session, cfg: web::Data<AppConfig>, req: HttpRequest, key: web::Query<QueryStringKey>) -> HttpResponse {
   crate::redir(&session, &cfg, req, |_ctx, router| {
     let es = cfg.session_svc().read_session(&key.key)?;
-    router.route("session.join", &[&es.key()])
+    router.route("session.join", &[es.key()])
   })
 }
 
@@ -30,6 +30,6 @@ pub(crate) fn join_link(session: Session, cfg: web::Data<AppConfig>, req: HttpRe
 pub(crate) fn join(session: Session, cfg: web::Data<AppConfig>, req: HttpRequest, key: web::Path<String>) -> HttpResponse {
   crate::act(&session, &cfg, req, |ctx, router| {
     let es = cfg.session_svc().read_session(&key)?;
-    rustimate_templates::session::detail(&ctx, router, &es)
+    rustimate_templates::session::detail(ctx, router, &es)
   })
 }

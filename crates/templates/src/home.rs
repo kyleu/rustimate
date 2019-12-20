@@ -12,14 +12,14 @@ pub fn index(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
     (session_form(ctx, router)?)
     (testbed_list(ctx, router)?)
   };
-  crate::section(ctx, router, "Home", content)
+  crate::section(ctx, router, "Home", &content)
 }
 
 fn session_form(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
   Ok(html! {
     div {
       form action=(router.route_simple("session.create")?) method="get" {
-        (crate::card(&ctx, html! {
+        (crate::card(ctx, &html! {
           h4 { "Create Session" }
           input.uk-input type="text" placeholder="Title" name="key" {}
           button.uk-button.uk-button-default type="submit" { "Create Session" }
@@ -28,7 +28,7 @@ fn session_form(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
     }
     div {
       form action=(router.route_simple("session.join_link")?) method="get" {
-        (crate::card(&ctx, html! {
+        (crate::card(ctx, &html! {
           h4 { "Join Session" }
           input.uk-input type="text" placeholder="Title" name="key" {}
           button.uk-button.uk-button-default type="submit" { "Join Session" }
@@ -46,7 +46,7 @@ fn testbed_list(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
     ("scroll", "Scroll", "Scrolling test"),
     ("crash", "Crash", "Simulates a server error"),
   ];
-  Ok(crate::card(&ctx, html! {
+  Ok(crate::card(ctx, &html! {
     h4 { "Testbeds" }
     table.uk-table.uk-table-divider {
       tbody {

@@ -10,7 +10,7 @@ pub struct SendResponseMessage {
 }
 
 impl SendResponseMessage {
-  pub(crate) fn msg(&self) -> &ResponseMessage {
+  pub(crate) const fn msg(&self) -> &ResponseMessage {
     &self.msg
   }
 }

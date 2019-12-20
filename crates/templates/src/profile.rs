@@ -13,7 +13,7 @@ pub fn profile(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
           }
         }
         div.uk-margin-top.uk-container.uk-container-small {
-          (crate::card(&ctx, html! {
+          (crate::card(ctx, &html! {
             form action="" method="post" {
               fieldset.uk-fieldset {
                 div.uk-margin {
@@ -34,7 +34,7 @@ pub fn profile(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
                 div.uk-margin {
                   label { "Navbar Color" }
                   div#colors {
-                    @for c in crate::components::colors::COLORS.iter() {
+                    @for c in &crate::components::colors::COLORS {
                       (nav_swatch(ctx.user_profile(), c))
                     }
                   }
@@ -47,7 +47,7 @@ pub fn profile(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
                     " Color"
                   }
                   div#colors {
-                    @for c in crate::components::colors::COLORS.iter() {
+                    @for c in &crate::components::colors::COLORS {
                       (link_swatch(ctx.user_profile(), c))
                     }
                   }
@@ -88,7 +88,7 @@ pub fn profile(ctx: &RequestContext, router: &dyn Router) -> Result<Markup> {
       }
     "#))
   };
-  crate::simple(ctx, router, "Profile", content)
+  crate::simple(ctx, router, "Profile", &content)
 }
 
 fn nav_swatch(p: &rustimate_core::profile::UserProfile, c: &str) -> Markup {

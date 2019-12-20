@@ -18,14 +18,8 @@ pub(crate) struct SessionContext {
 }
 
 impl SessionContext {
-  pub(crate) fn new(
-    session: EstimateSession,
-    members: Vec<Member>,
-    connected: Vec<Uuid>,
-    polls: Vec<Poll>,
-    votes: Vec<Vote>
-  ) -> SessionContext {
-    SessionContext {
+  pub(crate) fn new(session: EstimateSession, members: &[Member], connected: &[Uuid], polls: &[Poll], votes: &[Vote]) -> Self {
+    Self {
       session,
       members: members.iter().map(|m| (*m.user_id(), m.clone())).collect(),
       connected: connected.iter().copied().collect(),
@@ -34,7 +28,7 @@ impl SessionContext {
     }
   }
 
-  pub(crate) fn session(&self) -> &EstimateSession {
+  pub(crate) const fn session(&self) -> &EstimateSession {
     &self.session
   }
 
@@ -42,7 +36,7 @@ impl SessionContext {
     self.session = s
   }
 
-  pub(crate) fn members(&self) -> &HashMap<Uuid, Member> {
+  pub(crate) const fn members(&self) -> &HashMap<Uuid, Member> {
     &self.members
   }
 
@@ -50,11 +44,11 @@ impl SessionContext {
     let _ = self.members.insert(m.user_id().clone(), m);
   }
 
-  pub(crate) fn connected(&self) -> &HashSet<Uuid> {
+  pub(crate) const fn connected(&self) -> &HashSet<Uuid> {
     &self.connected
   }
 
-  pub(crate) fn polls(&self) -> &HashMap<Uuid, Poll> {
+  pub(crate) const fn polls(&self) -> &HashMap<Uuid, Poll> {
     &self.polls
   }
 
@@ -62,7 +56,7 @@ impl SessionContext {
     let _ = self.polls.insert(p.id().clone(), p);
   }
 
-  pub(crate) fn _votes(&self) -> &HashMap<(Uuid, Uuid), Vote> {
+  pub(crate) const fn _votes(&self) -> &HashMap<(Uuid, Uuid), Vote> {
     &self.votes
   }
 }

@@ -18,11 +18,11 @@ pub struct Member {
 }
 
 impl Member {
-  pub fn user_id(&self) -> &Uuid {
+  pub const fn user_id(&self) -> &Uuid {
     &self.user_id
   }
 
-  pub fn name(&self) -> &String {
+  pub const fn name(&self) -> &String {
     &self.name
   }
 
@@ -30,7 +30,7 @@ impl Member {
     self.name = t;
   }
 
-  pub fn role(&self) -> &MemberRole {
+  pub const fn role(&self) -> &MemberRole {
     &self.role
   }
 

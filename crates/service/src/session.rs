@@ -15,32 +15,45 @@ pub struct SessionService {
 }
 
 impl SessionService {
-  pub fn new(files: FileService, logger: slog::Logger) -> SessionService {
+  pub fn new(files: FileService, logger: &slog::Logger) -> Self {
     let log = logger.new(slog::o!("service" => "session"));
-    SessionService { files: Arc::new(RwLock::new(files)), log }
+    Self {
+      files: Arc::new(RwLock::new(files)),
+      log
+    }
   }
 
   pub fn read_session(&self, key: &str) -> Result<EstimateSession> {
     slog::debug!(&self.log, "Loading session [{}]", key);
     let p = format!("session/{}/session.json", key);
-    if self.files.read().unwrap().exists(&p) {
-      self.files.read().unwrap().read_json(&p)
+    let f = self.files.read().expect("Cannot lock FileService for read");
+    if f.exists(&p) {
+      f.read_json(&p)
     } else {
       Err(anyhow::anyhow!("No session found with key [{}]", key))
     }
   }
 
   pub fn write_session(&self, session: &EstimateSession) -> Result<()> {
-    self.files.write().unwrap().create_dir_if_needed(&format!("session/{}", session.key()))?;
+    self
+      .files
+      .write()
+      .expect("Cannot lock FileService for read")
+      .create_dir_if_needed(&format!("session/{}", session.key()))?;
     slog::debug!(&self.log, "Writing session [{}]", session.key());
-    self.files.write().unwrap().write_json(session, &format!("session/{}/session.json", session.key()))
+    self
+      .files
+      .write()
+      .expect("Cannot lock FileService for read")
+      .write_json(session, &format!("session/{}/session.json", session.key()))
   }
 
   pub fn read_members(&self, key: &str) -> Result<Vec<Member>> {
     slog::debug!(&self.log, "Loading members for session [{}]", key);
     let p = format!("session/{}/members.json", key);
-    if self.files.read().unwrap().exists(&p) {
-      self.files.read().unwrap().read_json(&p)
+    let f = self.files.read().expect("Cannot lock FileService for read");
+    if f.exists(&p) {
+      f.read_json(&p)
     } else {
       Ok(vec![])
     }
@@ -77,14 +90,15 @@ impl SessionService {
 
   pub fn write_members(&self, key: &str, vm: Vec<Member>) -> Result<()> {
     let p = format!("session/{}/members.json", key);
-    self.files.write().unwrap().write_json(vm, &p)
+    self.files.write().expect("Cannot lock FileService for write").write_json(vm, &p)
   }
 
   pub fn read_polls(&self, key: &str) -> Result<Vec<Poll>> {
     slog::debug!(&self.log, "Loading polls for session [{}]", key);
     let p = format!("session/{}/polls.json", key);
-    if self.files.read().unwrap().exists(&p) {
-      self.files.read().unwrap().read_json(&p)
+    let f = self.files.read().expect("Cannot lock FileService for read");
+    if f.exists(&p) {
+      f.read_json(&p)
     } else {
       Ok(vec![])
     }
@@ -108,14 +122,15 @@ impl SessionService {
 
   pub fn write_polls(&self, key: &str, vm: Vec<Poll>) -> Result<()> {
     let p = format!("session/{}/polls.json", key);
-    self.files.read().unwrap().write_json(vm, &p)
+    self.files.read().expect("Cannot lock FileService for read").write_json(vm, &p)
   }
 
   pub fn read_votes(&self, key: &str) -> Result<Vec<Vote>> {
     slog::debug!(&self.log, "Loading votes for session [{}]", key);
     let p = format!("session/{}/votes.json", key);
-    if self.files.read().unwrap().exists(&p) {
-      self.files.read().unwrap().read_json(&p)
+    let f = self.files.read().expect("Cannot lock FileService for read");
+    if f.exists(&p) {
+      f.read_json(&p)
     } else {
       Ok(vec![])
     }
@@ -124,6 +139,7 @@ impl SessionService {
   pub fn add_vote(&mut self, key: &str, v: Vote) -> Result<()> {
     let mut current = self.read_votes(key)?;
     if current.iter().any(|x| x.poll_id() == v.poll_id() && x.user_id() == v.user_id()) {
+      // TODO impl
       Ok(())
     } else {
       current.push(v);
@@ -133,6 +149,6 @@ impl SessionService {
 
   pub fn write_votes(&self, key: &str, vm: Vec<Vote>) -> Result<()> {
     let p = format!("session/{}/votes.json", key);
-    self.files.read().unwrap().write_json(vm, &p)
+    self.files.read().expect("Cannot lock FileService for read").write_json(vm, &p)
   }
 }

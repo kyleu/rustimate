@@ -8,10 +8,10 @@ pub fn testbed_key(session: Session, cfg: web::Data<AppConfig>, key: web::Path<S
   crate::act(&session, &cfg, req, |ctx, router| {
     let k: &str = &key;
     match k {
-      "dump" => rustimate_templates::testbed::dump(&ctx, router),
-      "gallery" => rustimate_templates::testbed::gallery(&ctx, router),
-      "prototype" => rustimate_templates::testbed::prototype(&ctx, router),
-      "scroll" => rustimate_templates::testbed::scroll(&ctx, router),
+      "dump" => rustimate_templates::testbed::dump(ctx, router),
+      "gallery" => rustimate_templates::testbed::gallery(ctx, router),
+      "prototype" => rustimate_templates::testbed::prototype(ctx, router),
+      "scroll" => rustimate_templates::testbed::scroll(ctx, router),
       _ => Err(anyhow::anyhow!("Cannot find testbed matching [{}]", key))
     }
   })
