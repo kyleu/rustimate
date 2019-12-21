@@ -54,7 +54,7 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
         }
       }
     }
-    (modals())
+    (crate::modals::modals())
     script src=(router.route_static("client.js")?) defer? {}
   };
   Ok(html! {
@@ -71,66 +71,4 @@ fn socket(ctx: &RequestContext) -> Result<Markup> {
     div#socket-status { "Connecting..." }
     div#socket-results.uk-margin-top { }
   }))
-}
-
-fn modals() -> Markup {
-  html!(
-    div#add-member-modal uk-modal? {
-      div.uk-modal-dialog.uk-modal-body {
-        h2.uk-modal-title { "Add Member" }
-        "I'm working on it, for now just copy/paste the url"
-        p.uk-text-right {
-          button.uk-button.uk-button-default.uk-modal-close type="button" { "Cancel" }
-        }
-      }
-    }
-    div#add-poll-modal uk-modal? {
-      div.uk-modal-dialog.uk-modal-body {
-        h2.uk-modal-title { "Add Poll" }
-        input.uk-input#poll-modal-input type="text" placeholder="Poll Question" name="poll" {}
-        p.uk-text-right {
-          button.uk-button.uk-button-default.uk-modal-close type="button" { "Cancel" }
-          button.uk-button.uk-button-primary.uk-modal-close type="button" onclick=(onclick_event("update-poll", "", "document.getElementById('poll-modal-input').value")) { "Add Poll" }
-        }
-      }
-    }
-    div#member-detail-modal uk-modal? {
-      div.uk-modal-dialog.uk-modal-body {
-        h2.uk-modal-title#member-detail-name { "..." }
-        div#member-detail-content { "..." }
-        p.uk-text-right {
-          button.uk-button.uk-button-default.uk-modal-close type="button" { "Close" }
-        }
-      }
-    }
-    div#poll-detail-modal uk-modal? {
-      div.uk-modal-dialog.uk-modal-body {
-        h2.uk-modal-title#poll-detail-title { "..." }
-        div#poll-detail-content { "..." }
-        p.uk-text-right {
-          button.uk-button.uk-button-default.uk-modal-close type="button" { "Close" }
-        }
-      }
-    }
-    div#profile-detail-modal uk-modal? {
-      div.uk-modal-dialog.uk-modal-body {
-        h2.uk-modal-title { "Edit Profile" }
-        input.uk-input#profile-detail-modal-input type="text" placeholder="Name" name="name" {}
-        p.uk-text-right {
-          button.uk-button.uk-button-default.uk-modal-close type="button" { "Cancel" }
-          button.uk-button.uk-button-primary.uk-modal-close type="button" onclick=(onclick_event("update-profile", "", "document.getElementById('profile-detail-modal-input').value")) { "Change Name" }
-        }
-      }
-    }
-    div#session-detail-modal uk-modal? {
-      div.uk-modal-dialog.uk-modal-body {
-        h2.uk-modal-title { "Edit Session" }
-        input.uk-input#session-detail-modal-input type="text" placeholder="Name" name="name" {}
-        p.uk-text-right {
-          button.uk-button.uk-button-default.uk-modal-close type="button" { "Cancel" }
-          button.uk-button.uk-button-primary.uk-modal-close type="button" onclick=(onclick_event("update-session", "", "document.getElementById('session-detail-modal-input').value")) { "Change Name" }
-        }
-      }
-    }
-  )
 }

@@ -92,6 +92,7 @@ pub(crate) mod components {
 pub mod error;
 pub mod gallery;
 pub mod home;
+pub(crate) mod modals;
 pub mod profile;
 pub mod session;
 pub mod settings;

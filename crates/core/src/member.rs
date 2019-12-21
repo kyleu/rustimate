@@ -10,6 +10,19 @@ pub enum MemberRole {
   Invited
 }
 
+impl std::fmt::Display for MemberRole {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    let s = match self {
+      Self::Creator => "Creator",
+      Self::Admin => "Admin",
+      Self::Participant => "Participant",
+      Self::Observer => "Observer",
+      Self::Invited => "Invited"
+    };
+    write!(f, "{}", s)
+  }
+}
+
 #[derive(Clone, Debug, derive_more::Constructor, Deserialize, Serialize)]
 pub struct Member {
   user_id: Uuid,

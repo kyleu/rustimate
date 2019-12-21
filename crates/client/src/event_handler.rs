@@ -3,9 +3,10 @@ use crate::ctx::ClientContext;
 use anyhow::Result;
 use maud::html;
 use rustimate_core::util::NotificationLevel;
+use rustimate_core::poll::PollStatus;
 use rustimate_core::RequestMessage;
+use std::str::FromStr;
 use uuid::Uuid;
-
 pub(crate) struct EventHandler {}
 
 impl EventHandler {
@@ -20,6 +21,7 @@ impl EventHandler {
         v: js_sys::Date::now() as i64
       }),
       "session-detail" => on_session_detail(ctx),
+      "set-poll-status" => on_set_poll_status(ctx, PollStatus::from_str(k)?),
       "update-poll" => on_update_poll(ctx, v),
       _ => {
         warn!("Unhandled event [{}] with [k:{}], [v:{}]", t, k, v);
@@ -44,7 +46,9 @@ fn on_poll_detail(ctx: &ClientContext, id: Uuid) -> Result<()> {
   if let Some(sc) = ctx.session_ctx() {
     if let Some(p) = sc.polls().get(&id) {
       ctx.replace_template("poll-detail-title", html!((p.title())))?;
-      ctx.replace_template("poll-detail-content", crate::templates::poll::poll_detail(ctx, p))?;
+      ctx.set_input_value("active-poll-id", &format!("{}", id))?;
+      poll_status_dom(ctx, p.status().clone())?;
+      //ctx.replace_template("poll-detail-content", crate::templates::poll::poll_detail(ctx, p))?;
     }
   }
   crate::js::show_modal("poll-detail-modal");
@@ -62,6 +66,23 @@ fn on_session_detail(ctx: &ClientContext) -> Result<()> {
     ctx.set_input_value("session-detail-modal-input", sc.session().title())?;
   }
   crate::js::show_modal("session-detail-modal");
+  Ok(())
+}
+
+fn get_active_poll_id(ctx: &ClientContext) -> Result<Uuid> {
+  Uuid::from_str(&ctx.get_input_value("active-poll-id")?).map_err(|_| anyhow::anyhow!("Unable to find active poll id"))
+}
+
+fn on_set_poll_status(ctx: &ClientContext, status: PollStatus) -> Result<()> {
+  poll_status_dom(ctx, status.clone())?;
+  ctx.send(&RequestMessage::SetPollStatus { poll: get_active_poll_id(ctx)?, status })?;
+  Ok(())
+}
+
+fn poll_status_dom(ctx: &ClientContext, status: PollStatus) -> Result<()> {
+  ctx.set_visible("poll-section-pending", status == PollStatus::Pending)?;
+  ctx.set_visible("poll-section-active", status == PollStatus::Active)?;
+  ctx.set_visible("poll-section-complete", status == PollStatus::Complete)?;
   Ok(())
 }
 

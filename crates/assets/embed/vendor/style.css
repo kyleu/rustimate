@@ -12126,3 +12126,9 @@ h4 {
 .resultset {
   overflow: auto;
 }
+
+.poll-section {
+  min-height: 480px;
+  border-top: 1px solid #ddd;
+  padding-top: 24px;
+}

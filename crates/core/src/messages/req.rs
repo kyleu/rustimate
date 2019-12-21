@@ -13,7 +13,7 @@ pub enum RequestMessage {
   UpdateSession { name: String, choices: Vec<String> },
   UpdateSelf { name: String },
   UpdatePoll { id: Uuid, title: String },
-  // SetPollStatus { poll: Uuid, status: PollStatusType },
+  SetPollStatus { poll: Uuid, status: crate::poll::PollStatus },
   SubmitVote { poll: Uuid, vote: String }
 }
 

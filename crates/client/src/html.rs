@@ -41,9 +41,20 @@ impl crate::ctx::ClientContext {
     Ok(())
   }
 
+  pub(crate) fn set_visible(&self, id: &str, v: bool) -> Result<()> {
+    let el = self.get_element_by_id(id)?;
+    let style = el.style();
+    let _ = style.set_property("display", if v { "block" } else { "none" });
+    Ok(())
+  }
+
   pub(crate) fn set_input_value(&self, id: &str, v: &str) -> Result<()> {
     self.get_element_by_id_as::<web_sys::HtmlInputElement>(id)?.set_value(v);
     Ok(())
+  }
+
+  pub(crate) fn get_input_value(&self, id: &str) -> Result<String> {
+    Ok(self.get_element_by_id_as::<web_sys::HtmlInputElement>(id)?.value())
   }
 }
 
