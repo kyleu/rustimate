@@ -3,8 +3,8 @@ use crate::ctx::ClientContext;
 use anyhow::Result;
 use maud::html;
 use rustimate_core::poll::{Poll, PollStatus};
-use rustimate_core::RequestMessage;
 use rustimate_core::util::NotificationLevel;
+use rustimate_core::RequestMessage;
 use std::collections::HashMap;
 use std::str::FromStr;
 use std::sync::RwLock;
@@ -30,12 +30,10 @@ pub(crate) fn on_update_poll(ctx: &RwLock<ClientContext>, poll: Poll) -> Result<
 pub(crate) fn render_polls(svc: &ClientContext, polls: &HashMap<Uuid, Poll>) -> Result<()> {
   let mut polls: Vec<&Poll> = polls.iter().map(|x| x.1).collect();
   match get_active_poll_id(svc) {
-    Ok(active) => {
-      match polls.iter().find(|x| x.id() == &active) {
-        Some(p) => poll_status_dom(svc, p.status().clone()),
-        None => Ok(())
-      }
-    }
+    Ok(active) => match polls.iter().find(|x| x.id() == &active) {
+      Some(p) => poll_status_dom(svc, p.status().clone()),
+      None => Ok(())
+    },
     Err(_) => Ok(())
   }?;
   polls.sort_by(|x, y| x.idx().partial_cmp(&y.idx()).expect("No index?"));
@@ -59,7 +57,10 @@ pub(crate) fn on_poll_detail(ctx: &ClientContext, id: Uuid) -> Result<()> {
 }
 
 pub(crate) fn on_set_poll_status(ctx: &ClientContext, status: PollStatus) -> Result<()> {
-  ctx.send(&RequestMessage::SetPollStatus { poll: get_active_poll_id(ctx)?, status })?;
+  ctx.send(&RequestMessage::SetPollStatus {
+    poll: get_active_poll_id(ctx)?,
+    status
+  })?;
   Ok(())
 }
 

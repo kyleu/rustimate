@@ -58,7 +58,12 @@ impl MessageHandler {
     } else {
       MemberRole::Participant
     };
-    let member = svc.update_member(&self.channel_id, *self.ctx.user_id(), self.ctx.user_profile().name().clone(), Some(role))?;
+    let member = svc.update_member(
+      &self.channel_id,
+      *self.ctx.user_id(),
+      self.ctx.user_profile().name().clone(),
+      Some(role)
+    )?;
     self.send_to_channel_except_self(&ResponseMessage::UpdateMember { member })?;
 
     self.send_to_self(ResponseMessage::SessionJoined {
@@ -110,7 +115,7 @@ impl MessageHandler {
 
   fn on_submit_vote(&self, poll: Uuid, vote: String) -> Result<()> {
     let svc = self.ctx().app().session_svc();
-    let vote = Vote::new(poll, self.ctx().user_id().clone(), vote);
+    let vote = Vote::new(poll, *self.ctx().user_id(), vote);
     let vote = svc.update_vote(self.channel_id(), vote)?;
     self.send_to_channel(&ResponseMessage::UpdateVote { vote })
   }

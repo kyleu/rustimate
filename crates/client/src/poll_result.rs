@@ -16,36 +16,30 @@ impl ResultSummary {
     let mut invalid_votes = Vec::new();
 
     for m in members {
-      let hit = votes.iter().find_map(|v| {
-        if &v.0 == m.user_id() { Some(v.1.clone()) } else { None }
-      });
+      let hit = votes
+        .iter()
+        .find_map(|v| if &v.0 == m.user_id() { Some(v.1.clone()) } else { None });
       match hit {
         Some(h) => {
           let i = match h.parse::<f64>() {
             Ok(n) => Some(n),
             Err(_) => None
           };
-          valid_votes.push((m.user_id().clone(), h, i))
-        },
-        None => invalid_votes.push((m.user_id().clone(), None))
+          valid_votes.push((*m.user_id(), h, i))
+        }
+        None => invalid_votes.push((*m.user_id(), None))
       }
     }
 
     let mut numbers: Vec<f64> = valid_votes.iter().flat_map(|x| x.2).collect();
-    numbers.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    numbers.sort_by(|a, b| a.partial_cmp(b).expect("Uncomparable?"));
     let sum = numbers.iter().sum::<f64>();
 
-    let mean = if numbers.len() > 0 {
-      (sum) / (numbers.len() as f64)
-    } else {
+    let mean = if numbers.is_empty() { 0.0 } else { sum / (numbers.len() as f64) };
+    let median = if numbers.is_empty() { 0.0 } else { numbers[numbers.len() / 2] };
+    let mode = if numbers.is_empty() {
       0.0
-    };
-    let median = if numbers.len() > 0 {
-      numbers[numbers.len() / 2]
     } else {
-      0.0
-    };
-    let mode = if numbers.len() > 0 {
       let mut occurrences = HashMap::new();
 
       for value in numbers {
@@ -57,11 +51,15 @@ impl ResultSummary {
         .max_by_key(|&(_, count)| count)
         .map(|(val, _)| val.parse::<f64>().expect("Did it change somehow?"))
         .expect("Mode attempted with zero numbers")
-    } else {
-      0.0
     };
 
-    Self { valid_votes, invalid_votes, mean, median, mode }
+    Self {
+      valid_votes,
+      invalid_votes,
+      mean,
+      median,
+      mode
+    }
   }
 
   pub(crate) const fn valid_votes(&self) -> &Vec<(Uuid, String, Option<f64>)> {

@@ -1,6 +1,6 @@
 [package]
 name = "rustimate"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Kyle U <kyle@kyleu.com>"]
 edition = "2018"
 description = "A planning poker app, mostly developed to learn Rust"
@@ -35,16 +35,16 @@ actix-session = "0.2.0"
 actix-utils = "0.4.7"
 actix-web = "1.0.9"
 actix-web-codegen = "0.1.3"
-anyhow = "1.0.25"
+anyhow = "1.0.26"
 app_dirs2 = "2.0.4"
 arrayvec = "0.5.1"
 bincode = "1.2.1"
 bitflags = "1.2.1"
 clap = "2.33.0"
-rustimate-controllers = { version = "0.0.1", path = "crates/controllers" }
-rustimate-core = { version = "0.0.1", path = "crates/core" }
-rustimate-service = { version = "0.0.1", path = "crates/service" }
-rustimate-templates = { version = "0.0.1", path = "crates/templates" }
+rustimate-controllers = { version = "0.1.0", path = "crates/controllers" }
+rustimate-core = { version = "0.1.0", path = "crates/core" }
+rustimate-service = { version = "0.1.0", path = "crates/service" }
+rustimate-templates = { version = "0.1.0", path = "crates/templates" }
 failure = "0.1.6"
 flate2 = "1.0.13"
 futures = "0.1.29"

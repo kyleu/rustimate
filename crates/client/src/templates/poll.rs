@@ -1,10 +1,10 @@
 use crate::ctx::ClientContext;
 
+use crate::poll_result::ResultSummary;
 use maud::{html, Markup};
 use rustimate_core::member::Member;
 use rustimate_core::poll::Poll;
 use uuid::Uuid;
-use crate::poll_result::ResultSummary;
 
 pub(crate) fn polls(ctx: &ClientContext, ps: Vec<&Poll>) -> Markup {
   html! {
@@ -55,7 +55,7 @@ pub(crate) fn vote_status(members: Vec<&Member>, votes: Vec<(Uuid, String)>) -> 
   }
 }
 
-pub(crate) fn vote_choices(choices: &Vec<String>, current: Option<String>) -> Markup {
+pub(crate) fn vote_choices(choices: &[String], current: Option<String>) -> Markup {
   html! {
     div {
       @for choice in choices {
@@ -79,7 +79,7 @@ pub(crate) fn vote_results(members: &[&Member], votes: &[(Uuid, String)]) -> Mar
             (member.name())
             div {
               div.large-text {
-                (votes.iter().find_map(|v| if &v.0 == member.user_id() { Some(v.1.clone()) } else { None }).unwrap_or("---".into()))
+                (votes.iter().find_map(|v| if &v.0 == member.user_id() { Some(v.1.clone()) } else { None }).unwrap_or_else(|| "---".into()))
               }
             }
           }

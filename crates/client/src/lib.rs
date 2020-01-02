@@ -84,8 +84,8 @@ mod html;
 mod js;
 mod members;
 mod message_handler;
-mod polls;
 mod poll_result;
+mod polls;
 mod session_ctx;
 pub(crate) mod socket {
   pub(crate) mod ws;

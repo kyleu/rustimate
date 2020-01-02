@@ -66,7 +66,6 @@ impl SessionService {
         Ok(m)
       }
     };
-    println!("###############\n{:?}\n#############", current);
     self.write_members(session_key, current)?;
     ret
   }
@@ -87,16 +86,24 @@ impl SessionService {
     }
   }
 
-  pub fn update_poll(&self, session_key: &str, poll_id: Uuid, title: Option<String>, status: Option<PollStatus>, author_id: Uuid) -> Result<Poll> {
+  pub fn update_poll(
+    &self, session_key: &str, poll_id: Uuid, title: Option<String>, status: Option<PollStatus>, author_id: Uuid
+  ) -> Result<Poll> {
     let mut current = self.read_polls(session_key)?;
     let ret = match current.iter_mut().find(|x| x.id() == &poll_id) {
       Some(p) => {
-        p.set_title(title.unwrap_or(p.title().into()));
-        p.set_status(status.unwrap_or(p.status().clone()));
+        p.set_title(title.unwrap_or_else(|| p.title().into()));
+        p.set_status(status.unwrap_or_else(|| p.status().clone()));
         Ok(p.clone())
       }
       None => {
-        let p = Poll::new(poll_id, current.len() as u32, author_id, title.unwrap_or("New poll".into()), status.unwrap_or(PollStatus::Pending));
+        let p = Poll::new(
+          poll_id,
+          current.len() as u32,
+          author_id,
+          title.unwrap_or_else(|| "New poll".into()),
+          status.unwrap_or(PollStatus::Pending)
+        );
         current.push(p.clone());
         Ok(p)
       }
@@ -123,7 +130,10 @@ impl SessionService {
 
   pub fn update_vote(&self, key: &str, vote: Vote) -> Result<Vote> {
     let mut current = self.read_votes(key)?;
-    let ret = match current.iter_mut().find(|x| x.poll_id() == vote.poll_id() && x.user_id() == vote.user_id()) {
+    let ret = match current
+      .iter_mut()
+      .find(|x| x.poll_id() == vote.poll_id() && x.user_id() == vote.user_id())
+    {
       Some(v) => {
         v.set_choice(vote.choice().into());
         Ok(v.clone())

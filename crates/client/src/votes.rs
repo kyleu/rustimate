@@ -2,8 +2,8 @@ use crate::ctx::ClientContext;
 use crate::poll_result::ResultSummary;
 
 use anyhow::Result;
-use std::sync::RwLock;
 use rustimate_core::poll::Vote;
+use std::sync::RwLock;
 
 pub(crate) fn on_update_vote(ctx: &RwLock<ClientContext>, v: Vote) -> Result<()> {
   {
@@ -28,7 +28,10 @@ pub(crate) fn render_votes(svc: &ClientContext) -> Result<()> {
         let me = &svc.user_id().expect("No current user!");
         let current = votes.iter().find_map(|v| if &v.0 == me { Some(v.1.clone()) } else { None });
         svc.replace_template("poll-vote-status", crate::templates::poll::vote_status(sc.members_sorted(), votes))?;
-        svc.replace_template("poll-vote-choices", crate::templates::poll::vote_choices(sc.session().choices(), current))?;
+        svc.replace_template(
+          "poll-vote-choices",
+          crate::templates::poll::vote_choices(sc.session().choices(), current)
+        )?;
       }
       Ok(())
     }

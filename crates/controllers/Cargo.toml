@@ -1,6 +1,6 @@
 [package]
 name = "rustimate-controllers"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Kyle U <kyle@kyleu.com>"]
 edition = "2018"
 description = "HTTP controllers for the rustimate server"
@@ -12,10 +12,10 @@ repository = "https://github.com/kyleu/rustimate"
 license = "MIT"
 
 [dependencies]
-rustimate-assets = { version = "0.0.1", path = "../assets" }
-rustimate-core = { version = "0.0.1", path = "../core" }
-rustimate-service = { version = "0.0.1", path = "../service" }
-rustimate-templates = { version = "0.0.1", path = "../templates" }
+rustimate-assets = { version = "0.1.0", path = "../assets" }
+rustimate-core = { version = "0.1.0", path = "../core" }
+rustimate-service = { version = "0.1.0", path = "../service" }
+rustimate-templates = { version = "0.1.0", path = "../templates" }
 
 actix = "0.8.3"
 actix-http = "0.2.11"
@@ -23,7 +23,7 @@ actix-service = "0.4.2"
 actix-session = "0.2.0"
 actix-web = "1.0.9"
 actix-web-actors = "1.0.3"
-anyhow = "1.0.25"
+anyhow = "1.0.26"
 bytes = "0.4.12"
 chrono = { version = "0.4.10", features = ["serde"] }
 derive_more = "0.99.2"

@@ -1,6 +1,6 @@
 [package]
 name = "rustimate-assets"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Kyle U <kyle@kyleu.com>"]
 edition = "2018"
 description = "Embedded web assets for rustimate"

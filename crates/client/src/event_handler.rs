@@ -1,8 +1,8 @@
 use crate::ctx::ClientContext;
 
 use anyhow::Result;
-use rustimate_core::util::NotificationLevel;
 use rustimate_core::poll::PollStatus;
+use rustimate_core::util::NotificationLevel;
 use rustimate_core::RequestMessage;
 use std::str::FromStr;
 use uuid::Uuid;

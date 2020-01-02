@@ -104,7 +104,7 @@ pub struct Vote {
 }
 
 impl Vote {
-  pub fn new(poll_id: Uuid, user_id: Uuid, choice: String) -> Self {
+  pub const fn new(poll_id: Uuid, user_id: Uuid, choice: String) -> Self {
     Self { poll_id, user_id, choice }
   }
 

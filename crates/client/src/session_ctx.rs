@@ -67,23 +67,19 @@ impl SessionContext {
   }
 
   pub(crate) fn votes_by_poll(&self, p: &Uuid) -> Vec<(Uuid, String)> {
-    self.votes.iter().filter_map(|x| {
-      if &(x.0).0 == p {
-        Some(((x.0).1, x.1.clone()))
-      } else {
-        None
-      }
-    }).collect()
+    self
+      .votes
+      .iter()
+      .filter_map(|x| if &(x.0).0 == p { Some(((x.0).1, x.1.clone())) } else { None })
+      .collect()
   }
 
   pub(crate) fn _votes_by_user(&self, u: &Uuid) -> Vec<(Uuid, String)> {
-    self.votes.iter().filter_map(|x| {
-      if &(x.0).1 == u {
-        Some(((x.0).0, x.1.clone()))
-      } else {
-        None
-      }
-    }).collect()
+    self
+      .votes
+      .iter()
+      .filter_map(|x| if &(x.0).1 == u { Some(((x.0).0, x.1.clone())) } else { None })
+      .collect()
   }
 
   pub(crate) fn set_vote(&mut self, p: Uuid, u: Uuid, v: String) {
