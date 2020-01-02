@@ -12038,6 +12038,14 @@ pre {
   float: left;
 }
 
+.clear {
+  clear: both;
+}
+
+.large-text {
+  font-size: 150%;
+}
+
 h4 {
   margin-top: none;
 }
@@ -12131,4 +12139,30 @@ h4 {
   min-height: 480px;
   border-top: 1px solid #ddd;
   padding-top: 24px;
+}
+
+.vote-member {
+  text-align: center;
+  min-width: 80px;
+}
+.vote-member .stat {
+  font-size: 200%;
+}
+
+.vote-choice, .vote-member {
+  float: left;
+  margin: 8px;
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+
+.vote-choice {
+  cursor: pointer;
+  font-size: 125%;
+  min-width: 40px;
+  text-align: center;
+}
+.vote-choice.active {
+  border: 1px solid #000;
+  background: #eee;
 }

@@ -12,7 +12,7 @@ pub enum RequestMessage {
   JoinSession { id: Uuid },
   UpdateSession { name: String, choices: Vec<String> },
   UpdateSelf { name: String },
-  UpdatePoll { id: Uuid, title: String },
+  SetPollTitle { id: Uuid, title: String },
   SetPollStatus { poll: Uuid, status: crate::poll::PollStatus },
   SubmitVote { poll: Uuid, vote: String }
 }

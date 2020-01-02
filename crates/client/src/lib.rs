@@ -1,5 +1,6 @@
 #![feature(proc_macro_hygiene)]
 #![feature(exclusive_range_pattern)]
+#![feature(option_result_contains)]
 #![warn(anonymous_parameters)]
 #![warn(bare_trait_objects)]
 #![warn(elided_lifetimes_in_paths)]
@@ -84,6 +85,7 @@ mod js;
 mod members;
 mod message_handler;
 mod polls;
+mod poll_result;
 mod session_ctx;
 pub(crate) mod socket {
   pub(crate) mod ws;
@@ -95,3 +97,4 @@ pub(crate) mod templates {
   pub(crate) mod member;
   pub(crate) mod poll;
 }
+pub(crate) mod votes;

@@ -13,7 +13,6 @@ pub(crate) struct MessageHandler {}
 
 impl MessageHandler {
   pub(crate) fn handle(ctx: &RwLock<ClientContext>, msg: ResponseMessage) -> Result<()> {
-    debug!("Message received: {:?}", msg);
     match msg {
       ResponseMessage::Connected {
         connection_id,
@@ -33,9 +32,10 @@ impl MessageHandler {
         votes
       } => on_session_joined(ctx, SessionContext::new(*session, &members, &connected, &polls, &votes)),
 
+      ResponseMessage::UpdateMember { member } => crate::members::on_update_member(ctx, member),
       ResponseMessage::UpdateSession { session } => on_update_session(ctx, session),
       ResponseMessage::UpdatePoll { poll } => crate::polls::on_update_poll(ctx, poll),
-      ResponseMessage::UpdateMember { member } => crate::members::on_update_member(ctx, member),
+      ResponseMessage::UpdateVote { vote } => crate::votes::on_update_vote(ctx, vote),
 
       _ => {
         warn!("Unhandled ResponseMessage [{:?}]", msg);
@@ -71,10 +71,9 @@ fn on_pong(ctx: &RwLock<ClientContext>, v: i64) -> Result<()> {
 }
 
 fn on_session_joined(ctx: &RwLock<ClientContext>, session: SessionContext) -> Result<()> {
-  info!("Session details received for [{}]", session.session().key());
   {
     let svc = ctx.read().expect("Cannot lock ClientContext for read");
-    crate::members::render_members(&svc, session.members(), session.connected())?;
+    crate::members::render_members(&svc, session.members_sorted(), session.connected())?;
     crate::polls::render_polls(&svc, session.polls())?;
   }
   {

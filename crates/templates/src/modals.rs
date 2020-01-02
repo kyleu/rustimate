@@ -20,7 +20,7 @@ pub(crate) fn modals() -> Markup {
         input.uk-input#poll-modal-input type="text" placeholder="Poll Question" name="poll" {}
         p.uk-text-right {
           button.uk-button.uk-button-default.uk-modal-close type="button" { "Cancel" }
-          button.uk-button.uk-button-primary.uk-modal-close type="button" onclick=(onclick_event("update-poll", "", "document.getElementById('poll-modal-input').value")) { "Add Poll" }
+          button.uk-button.uk-button-primary.uk-modal-close type="button" onclick=(onclick_event("submit-poll", "", "document.getElementById('poll-modal-input').value")) { "Add Poll" }
         }
       }
     }
@@ -40,12 +40,14 @@ pub(crate) fn modals() -> Markup {
           input#active-poll-id type="hidden" { }
           div.poll-section#poll-section-pending {
             h5 { "Poll is pending" }
-            p { "Ready when you are!" }
-            button.uk-button.uk-button-primary#poll-start-button onclick=(onclick_event("set-poll-status", &format!("{}", PollStatus::Active), "")) { "Start Voting" }
+            div.uk-margin-top {
+              button.uk-button.uk-button-default#poll-reset-button onclick=(onclick_event("delete-poll", "", "")) { "Delete Poll" }
+              " "
+              button.uk-button.uk-button-primary#poll-start-button onclick=(onclick_event("set-poll-status", &format!("{}", PollStatus::Active), "")) { "Start Voting" }
+            }
           }
           div.poll-section#poll-section-active {
             h5 { "Poll is active" }
-            p { "Make your choice" }
 
             h4 { "Vote Status" }
             div#poll-vote-status {
@@ -54,22 +56,21 @@ pub(crate) fn modals() -> Markup {
             div#poll-vote-choices {
               "TODO"
             }
-            button.uk-button.uk-button-default#poll-reset-button onclick=(onclick_event("set-poll-status", &format!("{}", PollStatus::Pending), "")) { "Clear Votes" }
-            " "
-            button.uk-button.uk-button-primary#poll-complete-button onclick=(onclick_event("set-poll-status", &format!("{}", PollStatus::Complete), "")) { "Finish Voting" }
+            div.uk-margin-top {
+              button.uk-button.uk-button-default#poll-reset-button onclick=(onclick_event("set-poll-status", &format!("{}", PollStatus::Pending), "")) { "Clear Votes" }
+              " "
+              button.uk-button.uk-button-primary#poll-complete-button onclick=(onclick_event("set-poll-status", &format!("{}", PollStatus::Complete), "")) { "Finish Voting" }
+            }
           }
           div.poll-section#poll-section-complete {
             h5 { "Poll is complete" }
-            p { "Nice work, everyone" }
             h4 { "Results" }
-            div#poll-vote-summary {
-              "TODO"
-            }
+            div#poll-complete-summary { }
             h4 { "Stats" }
-            div#poll-complete-stats {
-              "TODO"
+            div#poll-complete-stats { }
+            div.uk-margin-top {
+              button.uk-button.uk-button-default#poll-reopen-button onclick=(onclick_event("set-poll-status", &format!("{}", PollStatus::Active), "")) { "Reopen Voting" }
             }
-            button.uk-button.uk-button-default#poll-reopen-button onclick=(onclick_event("set-poll-status", &format!("{}", PollStatus::Active), "")) { "Reopen Voting" }
           }
         }
         p.uk-text-right {

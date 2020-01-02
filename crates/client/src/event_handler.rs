@@ -1,7 +1,6 @@
 use crate::ctx::ClientContext;
 
 use anyhow::Result;
-use maud::html;
 use rustimate_core::util::NotificationLevel;
 use rustimate_core::poll::PollStatus;
 use rustimate_core::RequestMessage;
@@ -14,15 +13,16 @@ impl EventHandler {
     match t {
       "update-profile" => on_update_profile(ctx, v),
       "update-session" => on_update_session(ctx, v),
-      "member-detail" => on_member_detail(ctx, Uuid::parse_str(k).expect("Invalid UUID")),
-      "poll-detail" => on_poll_detail(ctx, Uuid::parse_str(k).expect("Invalid UUID")),
+      "member-detail" => crate::members::on_member_detail(ctx, Uuid::parse_str(k).expect("Invalid UUID")),
+      "poll-detail" => crate::polls::on_poll_detail(ctx, Uuid::parse_str(k).expect("Invalid UUID")),
       "profile-detail" => on_profile_detail(ctx),
+      "select-choice" => on_select_choice(ctx, k),
       "send-ping" => ctx.send(&RequestMessage::Ping {
         v: js_sys::Date::now() as i64
       }),
       "session-detail" => on_session_detail(ctx),
-      "set-poll-status" => on_set_poll_status(ctx, PollStatus::from_str(k)?),
-      "update-poll" => on_update_poll(ctx, v),
+      "set-poll-status" => crate::polls::on_set_poll_status(ctx, PollStatus::from_str(k)?),
+      "submit-poll" => crate::polls::on_poll_submit(ctx, v),
       _ => {
         warn!("Unhandled event [{}] with [k:{}], [v:{}]", t, k, v);
         Ok(())
@@ -31,34 +31,17 @@ impl EventHandler {
   }
 }
 
-fn on_member_detail(ctx: &ClientContext, id: Uuid) -> Result<()> {
-  if let Some(sc) = ctx.session_ctx() {
-    if let Some(m) = sc.members().get(&id) {
-      ctx.replace_template("member-detail-name", html!((m.name())))?;
-      ctx.replace_template("member-detail-content", crate::templates::member::member_detail(ctx, m, false))?;
-    }
-  }
-  crate::js::show_modal("member-detail-modal");
-  Ok(())
-}
-
-fn on_poll_detail(ctx: &ClientContext, id: Uuid) -> Result<()> {
-  if let Some(sc) = ctx.session_ctx() {
-    if let Some(p) = sc.polls().get(&id) {
-      ctx.replace_template("poll-detail-title", html!((p.title())))?;
-      ctx.set_input_value("active-poll-id", &format!("{}", id))?;
-      poll_status_dom(ctx, p.status().clone())?;
-      //ctx.replace_template("poll-detail-content", crate::templates::poll::poll_detail(ctx, p))?;
-    }
-  }
-  crate::js::show_modal("poll-detail-modal");
-  Ok(())
-}
-
 fn on_profile_detail(ctx: &ClientContext) -> Result<()> {
   ctx.set_input_value("profile-detail-modal-input", ctx.user_profile().name())?;
   crate::js::show_modal("profile-detail-modal");
   Ok(())
+}
+
+fn on_select_choice(ctx: &ClientContext, vote: &str) -> Result<()> {
+  ctx.send(&RequestMessage::SubmitVote {
+    poll: crate::polls::get_active_poll_id(ctx)?,
+    vote: vote.to_string()
+  })
 }
 
 fn on_session_detail(ctx: &ClientContext) -> Result<()> {
@@ -66,23 +49,6 @@ fn on_session_detail(ctx: &ClientContext) -> Result<()> {
     ctx.set_input_value("session-detail-modal-input", sc.session().title())?;
   }
   crate::js::show_modal("session-detail-modal");
-  Ok(())
-}
-
-fn get_active_poll_id(ctx: &ClientContext) -> Result<Uuid> {
-  Uuid::from_str(&ctx.get_input_value("active-poll-id")?).map_err(|_| anyhow::anyhow!("Unable to find active poll id"))
-}
-
-fn on_set_poll_status(ctx: &ClientContext, status: PollStatus) -> Result<()> {
-  poll_status_dom(ctx, status.clone())?;
-  ctx.send(&RequestMessage::SetPollStatus { poll: get_active_poll_id(ctx)?, status })?;
-  Ok(())
-}
-
-fn poll_status_dom(ctx: &ClientContext, status: PollStatus) -> Result<()> {
-  ctx.set_visible("poll-section-pending", status == PollStatus::Pending)?;
-  ctx.set_visible("poll-section-active", status == PollStatus::Active)?;
-  ctx.set_visible("poll-section-complete", status == PollStatus::Complete)?;
   Ok(())
 }
 
@@ -105,16 +71,5 @@ fn on_update_session(ctx: &ClientContext, name: &str) -> Result<()> {
     })
   } else {
     Ok(())
-  }
-}
-
-fn on_update_poll(ctx: &ClientContext, v: &str) -> Result<()> {
-  if v.is_empty() {
-    crate::logging::notify(&NotificationLevel::Warn, "Enter a question next time")
-  } else {
-    ctx.send(&RequestMessage::UpdatePoll {
-      id: Uuid::new_v4(),
-      title: v.into()
-    })
   }
 }

@@ -1,7 +1,7 @@
 use crate::files::FileService;
 
 use rustimate_core::member::{Member, MemberRole};
-use rustimate_core::poll::{Poll, Vote};
+use rustimate_core::poll::{Poll, PollStatus, Vote};
 use rustimate_core::session::EstimateSession;
 
 use anyhow::Result;
@@ -35,17 +35,10 @@ impl SessionService {
   }
 
   pub fn write_session(&self, session: &EstimateSession) -> Result<()> {
-    self
-      .files
-      .write()
-      .expect("Cannot lock FileService for read")
-      .create_dir_if_needed(&format!("session/{}", session.key()))?;
     slog::debug!(&self.log, "Writing session [{}]", session.key());
-    self
-      .files
-      .write()
-      .expect("Cannot lock FileService for read")
-      .write_json(session, &format!("session/{}/session.json", session.key()))
+    let x = self.files.write().expect("Cannot lock FileService for read");
+    x.create_dir_if_needed(&format!("session/{}", session.key()))?;
+    x.write_json(session, &format!("session/{}/session.json", session.key()))
   }
 
   pub fn read_members(&self, key: &str) -> Result<Vec<Member>> {
@@ -59,33 +52,23 @@ impl SessionService {
     }
   }
 
-  pub fn update_member(&self, session_key: &str, user_id: Uuid, name: String, role: MemberRole) -> Result<Member> {
+  pub fn update_member(&self, session_key: &str, user_id: Uuid, name: String, role: Option<MemberRole>) -> Result<Member> {
     let mut current = self.read_members(session_key)?;
-    let member = match current.iter_mut().find(|x| x.user_id() == &user_id) {
+    let ret = match current.iter_mut().find(|x| x.user_id() == &user_id) {
       Some(m) => {
         m.set_name(name);
-        m.set_role(role);
+        let _ = role.map(|r| m.set_role(r));
         Ok(m.clone())
       }
       None => {
-        let m = Member::new(user_id, name, role);
+        let m = Member::new(user_id, name, role.unwrap_or(MemberRole::Participant));
         current.push(m.clone());
         Ok(m)
       }
     };
+    println!("###############\n{:?}\n#############", current);
     self.write_members(session_key, current)?;
-    member
-  }
-
-  pub fn update_member_name(&self, session_key: &str, user_id: Uuid, name: String) -> Result<Member> {
-    let mut current = self.read_members(session_key)?;
-    match current.iter_mut().find(|x| x.user_id() == &user_id) {
-      Some(m) => {
-        m.set_name(name);
-        Ok(m.clone())
-      }
-      None => Err(anyhow::anyhow!(format!("Cannot find user [{}]", user_id)))
-    }
+    ret
   }
 
   pub fn write_members(&self, key: &str, vm: Vec<Member>) -> Result<()> {
@@ -104,25 +87,27 @@ impl SessionService {
     }
   }
 
-  pub fn update_poll(&self, session_key: &str, poll_id: Uuid, title: String, author_id: Uuid) -> Result<Poll> {
+  pub fn update_poll(&self, session_key: &str, poll_id: Uuid, title: Option<String>, status: Option<PollStatus>, author_id: Uuid) -> Result<Poll> {
     let mut current = self.read_polls(session_key)?;
-    match current.iter_mut().find(|x| x.id() == &poll_id) {
+    let ret = match current.iter_mut().find(|x| x.id() == &poll_id) {
       Some(p) => {
-        p.set_title(title);
+        p.set_title(title.unwrap_or(p.title().into()));
+        p.set_status(status.unwrap_or(p.status().clone()));
         Ok(p.clone())
       }
       None => {
-        let p = Poll::new(poll_id, session_key.to_string(), current.len() as u32, author_id, title);
+        let p = Poll::new(poll_id, current.len() as u32, author_id, title.unwrap_or("New poll".into()), status.unwrap_or(PollStatus::Pending));
         current.push(p.clone());
-        self.write_polls(session_key, current)?;
         Ok(p)
       }
-    }
+    };
+    self.write_polls(session_key, current)?;
+    ret
   }
 
   pub fn write_polls(&self, key: &str, vm: Vec<Poll>) -> Result<()> {
     let p = format!("session/{}/polls.json", key);
-    self.files.read().expect("Cannot lock FileService for read").write_json(vm, &p)
+    self.files.write().expect("Cannot lock FileService for read").write_json(vm, &p)
   }
 
   pub fn read_votes(&self, key: &str) -> Result<Vec<Vote>> {
@@ -136,19 +121,24 @@ impl SessionService {
     }
   }
 
-  pub fn add_vote(&mut self, key: &str, v: Vote) -> Result<()> {
+  pub fn update_vote(&self, key: &str, vote: Vote) -> Result<Vote> {
     let mut current = self.read_votes(key)?;
-    if current.iter().any(|x| x.poll_id() == v.poll_id() && x.user_id() == v.user_id()) {
-      // TODO impl
-      Ok(())
-    } else {
-      current.push(v);
-      self.write_votes(key, current)
-    }
+    let ret = match current.iter_mut().find(|x| x.poll_id() == vote.poll_id() && x.user_id() == vote.user_id()) {
+      Some(v) => {
+        v.set_choice(vote.choice().into());
+        Ok(v.clone())
+      }
+      None => {
+        current.push(vote.clone());
+        Ok(vote)
+      }
+    };
+    self.write_votes(key, current)?;
+    ret
   }
 
   pub fn write_votes(&self, key: &str, vm: Vec<Vote>) -> Result<()> {
     let p = format!("session/{}/votes.json", key);
-    self.files.read().expect("Cannot lock FileService for read").write_json(vm, &p)
+    self.files.write().expect("Cannot lock FileService for read").write_json(vm, &p)
   }
 }

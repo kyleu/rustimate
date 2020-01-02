@@ -35,7 +35,6 @@ impl std::fmt::Display for PollStatus {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Poll {
   id: Uuid,
-  session_key: String,
   idx: u32,
   author_id: Uuid,
   title: String,
@@ -44,14 +43,13 @@ pub struct Poll {
 }
 
 impl Poll {
-  pub const fn new(id: Uuid, session_key: String, idx: u32, author_id: Uuid, title: String) -> Self {
+  pub const fn new(id: Uuid, idx: u32, author_id: Uuid, title: String, status: PollStatus) -> Self {
     Self {
       id,
-      session_key,
       idx,
       author_id,
       title,
-      status: PollStatus::Pending,
+      status,
       final_vote: None
     }
   }
@@ -75,6 +73,10 @@ impl Poll {
   pub const fn status(&self) -> &PollStatus {
     &self.status
   }
+
+  pub fn set_status(&mut self, s: PollStatus) {
+    self.status = s;
+  }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -96,18 +98,29 @@ pub struct PollAction {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Vote {
-  session_id: Uuid,
   poll_id: Uuid,
   user_id: Uuid,
   choice: String
 }
 
 impl Vote {
+  pub fn new(poll_id: Uuid, user_id: Uuid, choice: String) -> Self {
+    Self { poll_id, user_id, choice }
+  }
+
   pub const fn poll_id(&self) -> &Uuid {
     &self.poll_id
   }
 
   pub const fn user_id(&self) -> &Uuid {
     &self.user_id
+  }
+
+  pub const fn choice(&self) -> &String {
+    &self.choice
+  }
+
+  pub fn set_choice(&mut self, c: String) {
+    self.choice = c;
   }
 }

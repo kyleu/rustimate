@@ -2,6 +2,7 @@ use crate::RequestContext;
 
 use anyhow::Result;
 use rustimate_core::member::MemberRole;
+use rustimate_core::poll::{PollStatus, Vote};
 use rustimate_core::{RequestMessage, ResponseMessage};
 use uuid::Uuid;
 
@@ -57,7 +58,7 @@ impl MessageHandler {
     } else {
       MemberRole::Participant
     };
-    let member = svc.update_member(&self.channel_id, *self.ctx.user_id(), self.ctx.user_profile().name().clone(), role)?;
+    let member = svc.update_member(&self.channel_id, *self.ctx.user_id(), self.ctx.user_profile().name().clone(), Some(role))?;
     self.send_to_channel_except_self(&ResponseMessage::UpdateMember { member })?;
 
     self.send_to_self(ResponseMessage::SessionJoined {
@@ -79,7 +80,9 @@ impl MessageHandler {
   pub fn on_message(&self, msg: RequestMessage) -> Result<()> {
     match msg {
       RequestMessage::Ping { v } => self.send_to_self(ResponseMessage::Pong { v }),
-      RequestMessage::UpdatePoll { id, title } => self.on_update_poll(id, &title),
+      RequestMessage::SetPollTitle { id, title } => self.set_poll_title(id, &title),
+      RequestMessage::SetPollStatus { poll, status } => self.set_poll_status(poll, status),
+      RequestMessage::SubmitVote { poll, vote } => self.on_submit_vote(poll, vote),
       RequestMessage::UpdateSelf { name } => self.on_update_self(&name),
       RequestMessage::UpdateSession { name, choices } => self.on_update_session(name, choices),
       msg => {
@@ -89,38 +92,39 @@ impl MessageHandler {
     }
   }
 
-  fn on_update_poll(&self, id: Uuid, title: &str) -> Result<()> {
+  fn set_poll_title(&self, id: Uuid, title: &str) -> Result<()> {
     let svc = self.ctx().app().session_svc();
-    let poll = svc.update_poll(self.channel_id(), id, title.into(), *self.ctx().user_id())?;
+    let poll = svc.update_poll(self.channel_id(), id, Some(title.into()), None, *self.ctx().user_id())?;
     self.send_to_channel(&ResponseMessage::UpdatePoll { poll })?;
     slog::info!(self.log(), "Updated poll [{}: {}] for session [{}]", id, title, self.channel_id());
     Ok(())
   }
 
+  fn set_poll_status(&self, id: Uuid, status: PollStatus) -> Result<()> {
+    let svc = self.ctx().app().session_svc();
+    let poll = svc.update_poll(self.channel_id(), id, None, Some(status), *self.ctx().user_id())?;
+    self.send_to_channel(&ResponseMessage::UpdatePoll { poll })?;
+    slog::info!(self.log(), "Updated poll [{}] for session [{}]", id, self.channel_id());
+    Ok(())
+  }
+
+  fn on_submit_vote(&self, poll: Uuid, vote: String) -> Result<()> {
+    let svc = self.ctx().app().session_svc();
+    let vote = Vote::new(poll, self.ctx().user_id().clone(), vote);
+    let vote = svc.update_vote(self.channel_id(), vote)?;
+    self.send_to_channel(&ResponseMessage::UpdateVote { vote })
+  }
+
   fn on_update_self(&self, name: &str) -> Result<()> {
     let svc = self.ctx().app().session_svc();
-    let member = svc.update_member_name(self.channel_id(), *self.ctx().user_id(), name.into())?;
+    let member = svc.update_member(self.channel_id(), *self.ctx().user_id(), name.into(), None)?;
     self.send_to_channel(&ResponseMessage::UpdateMember { member })?;
-    slog::info!(
-      self.log(),
-      "Updated member [{}: {}] for session [{}]",
-      self.ctx().user_id(),
-      name,
-      self.channel_id()
-    );
     Ok(())
   }
 
   fn on_update_session(&self, title: String, choices: Vec<String>) -> Result<()> {
     let svc = self.ctx().app().session_svc();
     let mut session = svc.read_session(self.channel_id())?;
-    slog::info!(
-      self.log(),
-      "Updating session [{}: {:?}] for session [{}]",
-      &title,
-      &choices,
-      self.channel_id()
-    );
     session.set_title(title);
     session.set_choices(choices);
     svc.write_session(&session)?;

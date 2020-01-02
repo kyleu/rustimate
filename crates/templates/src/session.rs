@@ -45,8 +45,6 @@ pub fn detail(ctx: &RequestContext, router: &dyn Router, es: &EstimateSession) -
               li { "Loading polls..." }
             }
             a.(ctx.user_profile().link_class()) uk-toggle? onclick="document.getElementById('poll-modal-input').value = '';" href="#add-poll-modal" { "Add Poll" }
-            " "
-            a.(ctx.user_profile().link_class()) onclick=(onclick_event("update-poll", "", "'xxxxxxx'")) href="" { "Test" }
           }))
         }
         div."uk-width-1-1" {

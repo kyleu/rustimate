@@ -36,9 +36,9 @@ pub(crate) fn member_detail(_ctx: &ClientContext, m: &Member, conn: bool) -> Mar
 fn conn_el(conn: bool) -> Markup {
   html! {
     @if conn {
-      span { " (Connected)" }
+      // span { " (Connected)" }
     } else {
-      span { " (Not Connected)" }
+      // span { " (Not Connected)" }
     }
   }
 }
