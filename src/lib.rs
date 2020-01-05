@@ -93,34 +93,40 @@ mod server;
 pub mod tests;
 
 /// Application entrypoint, creates and starts the server
-pub fn go() -> anyhow::Result<()> {
+#[actix_rt::main]
+pub async fn go() -> anyhow::Result<()> {
   let cfg = crate::cfg::cfg_from_args();
   let (port_tx, _) = std::sync::mpsc::channel();
-  crate::server::start_server(&cfg, &port_tx)
+  crate::server::start_server(cfg, port_tx).await
+}
+
+/// Async application entrypoint, creates and starts the server, returning the port
+pub async fn go_async() -> u16 {
+  let (port_tx, port_rx) = std::sync::mpsc::channel();
+  let cfg = crate::cfg::cfg_from_args();
+
+  let _ = crate::server::start_server(cfg, port_tx).await;
+
+  port_rx.recv().expect("Cannot read port number")
 }
 
 /// External app entrypoint, calls `go()` directly and swallows errors
 #[no_mangle]
-pub extern "C" fn libgo() {
-  match go() {
-    Ok(_) => println!("Successfully started [{}]", rustimate_core::APPNAME),
-    Err(e) => println!("Error starting [{}]: {}", rustimate_core::APPNAME, e)
-  };
+#[allow(clippy::cast_lossless)]
+pub extern "C" fn libgo() -> i32 {
+  futures::executor::block_on(go_async()) as i32
 }
 
+/// Android function
 #[cfg(target_os = "android")]
 #[allow(non_snake_case)]
 pub mod android {
-  extern crate jni;
+  use libc;
 
-  use self::jni::objects::JClass;
-  use self::jni::JNIEnv;
-  use super::go;
-
+  /// JNI entrypoint, calls go()
   #[no_mangle]
   #[allow(unsafe_code)]
-  pub unsafe extern "C" fn Java_com_kyleu_rustimate_rustimate_go(env: JNIEnv<'_>, _: JClass<'_>) {
-    println!("Android!");
-    go();
+  pub unsafe extern "C" fn Java_com_rustimate_App_go() -> libc::c_int {
+    crate::go_async() as i32
   }
 }
