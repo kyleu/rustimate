@@ -10,6 +10,9 @@ use uuid::Uuid;
 pub(crate) fn on_update_member(ctx: &RwLock<ClientContext>, member: Member) -> Result<()> {
   {
     let mut svc = ctx.write().expect("Cannot lock ClientContext for write");
+    if svc.user_id().contains(member.user_id()) {
+      svc.update_name(member.name());
+    }
     if let Some(ref mut x) = svc.session_ctx_mut() {
       x.set_member(member);
     }
@@ -29,8 +32,10 @@ pub(crate) fn render_members(svc: &ClientContext, members: Vec<&Member>, connect
     if m.user_id() == me {
       let _ = svc.replace_template("profile-name-label", html!((m.name())));
       let _ = svc.set_input_value("profile-detail-modal-input", m.name());
+      Some(m)
+    } else {
+      None
     }
-    Some(m)
   });
   svc.replace_template("member-listing", crate::templates::member::members(svc, members, connected))
 }

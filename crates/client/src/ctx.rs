@@ -76,6 +76,10 @@ impl ClientContext {
     &self.user_profile
   }
 
+  pub(crate) fn update_name(&mut self, name: &str) -> () {
+    self.user_profile.set_name(name)
+  }
+
   pub(crate) fn on_open(&self) -> Result<()> {
     debug!("Open success for [{}]", self.user_profile().name());
     Ok(())

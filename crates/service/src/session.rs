@@ -56,16 +56,22 @@ impl SessionService {
     let mut current = self.read_members(session_key)?;
     let ret = match current.iter_mut().find(|x| x.user_id() == &user_id) {
       Some(m) => {
-        m.set_name(name);
+        m.set_name(name.clone());
         let _ = role.map(|r| m.set_role(r));
         Ok(m.clone())
       }
       None => {
-        let m = Member::new(user_id, name, role.unwrap_or(MemberRole::Participant));
+        let m = Member::new(user_id, name.clone(), role.unwrap_or(MemberRole::Participant));
         current.push(m.clone());
         Ok(m)
       }
     };
+    {
+      let f = self.files.write().expect("Cannot lock FileService for write");
+      let mut profile = crate::profile::load(&f, user_id);
+      profile.set_name(&name);
+      crate::profile::save(&f, &user_id, &profile)?;
+    }
     self.write_members(session_key, current)?;
     ret
   }

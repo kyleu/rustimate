@@ -87,6 +87,10 @@ impl UserProfile {
     &self.name
   }
 
+  pub fn set_name(&mut self, name: &str) -> () {
+    self.name = name.into();
+  }
+
   pub const fn theme(&self) -> &Theme {
     &self.theme
   }
