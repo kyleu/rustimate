@@ -19,7 +19,7 @@ rustimate-templates = { version = "0.1.0", path = "../templates" }
 
 actix = "0.9.0"
 actix-http = "1.0.1"
-actix-service = "1.0.1"
+actix-service = "2.0.2"
 actix-session = "0.3.0"
 actix-web = "2.0.0"
 actix-web-actors = "2.0.0"
