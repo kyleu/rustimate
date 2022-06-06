@@ -12,4 +12,4 @@ repository = "https://github.com/kyleu/rustimate"
 license = "MIT"
 
 [dependencies]
-rust-embed = { version = "5.2.0", features = ["interpolate-folder-path"] }
+rust-embed = { version = "6.3.0", features = ["interpolate-folder-path"] }
